@@ -9,9 +9,9 @@ b=minimax(b,0,2)[0]
 b.print_board()
 print(b.total_pieces[2][1].color)
 
-coordinates = input("Coordinate of Piece to be moved and destination (from 0 0 to 7 7)").split()
+move = input("Coordinate of Piece to be moved and direction(u d l r) (EX: 0 0 u = moves to 0 1) (t)").split()
 if game_turn<2:
-    b.move_piece(coordinates[0] + coordinates[1], coordinates[2] + coordinates[3])
+    b.move_piece_human(move[0] + move[1], move[2])
 b.print_board()
 b=minimax(b,0,2)[0]
 
