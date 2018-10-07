@@ -2,6 +2,7 @@ from copy import deepcopy
 
 def minimax(board,depth,depth_limit):
     best_board=None
+    print(depth,"d333333333333333")
     current_depth=depth+1
 
     if current_depth==depth_limit:
@@ -15,9 +16,9 @@ def minimax(board,depth,depth_limit):
 
     if board.turn==2:
         best_score=float('inf')
-        piece,move,turn=board.first_two_moves_picker()
+        piece,move,turn=board.first_two_moves_picker(0)
         best_board=deepcopy(board)
-        best_board.move_piece(str(piece.x)+str(piece.y),move)
+        best_board.move_piece_computer(str(piece.x)+str(piece.y),move)
 
 
 
@@ -40,11 +41,14 @@ def minimax(board,depth,depth_limit):
                 best_score=minimax_returned_score
 
     else:
-        best_score=float('inf')
-        minimax_board,minimax_returned_score= minimax(best_board,current_depth,depth_limit)
-        if minimax_returned_score < best_score:
-            best_board=minimax_board
-            best_score=minimax_returned_score
+        for piece,move in board.expand_white_moves():
+            best_score=float('inf')
+            best_board=deepcopy(board)
+            best_board.move_piece_computer(str(piece.x)+str(piece.y),move[1])
+            minimax_board,minimax_returned_score= minimax(best_board,current_depth,depth_limit)
+            if minimax_returned_score < best_score:
+                best_board=minimax_board
+                best_score=minimax_returned_score
 
     return best_board,best_score
 

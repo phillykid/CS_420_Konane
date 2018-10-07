@@ -29,15 +29,18 @@ class gameBoard():
     def update_game_piece_position(self,x1,y1,x2, y2):
         if not x2 == None and y2 ==None:
             self.total_pieces[y2][x2]=self.total_pieces[y1][x1]
-            self.total_pieces[x2][y2].update_coordinates(x2,y2)
+            self.total_pieces[y2][x2].update_coordinates(x2,y2)
             self.total_pieces[y1][x1]="-"
         else:
             print(x1,y1,"lookookokokoko")
-            print(self.total_pieces[x1][y1].color)
+            print(self.total_pieces[y1][x1].color)
             piece_to_remove=self.total_pieces[y1][x1]
-            self.total_pieces[y1][x1]="-"
             if piece_to_remove.color == 1:
                 del self.black_pieces[piece_to_remove.piece_id]
+            else:
+                del self.white_pieces[piece_to_remove.piece_id]
+            self.total_pieces[y1][x1]="-"
+
 
 
 
@@ -223,9 +226,12 @@ class gameBoard():
                     adj_x,adj_y=x,y
             if legal_check==1:
                 return self.generate_set_of_legal_moves_for_second_move(adj_x,adj_y)
-            print(white_has_to_pick_adjacent.piece_id)
             white_choice = random.choice(self.generate_set_of_legal_moves_for_second_move(adj_x,adj_y))
-            return self.total_pieces[white_choice[0]][white_choice[1],"--",self.turn+1]
+            print("daddadadadaD",white_choice)
+            x=white_choice[0]
+            y=white_choice[1]
+
+            return self.total_pieces[y][x],"--",self.turn+1
         return (random.choice(pieces),"--",self.turn+1)
 
 
