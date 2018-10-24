@@ -31,7 +31,7 @@ boardLabel3.pack()
 
 b = gameBoard(8, 8,1)
 hp=HumanPlayer("W","B")
-cp=ComputerSimplePlayer("B","W",3)
+cp=ComputerSimplePlayer("B","W",4)
 
 b.print_board()
 #print(b.evaluate_board_desiarbility())

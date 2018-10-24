@@ -29,18 +29,18 @@ class gameBoard():
     def update_game_piece_position(self,x1,y1,x2, y2):
         if not (x2 == None and y2 ==None):
             print(x1,y1,x2,y2,"babababbaba")
-            self.total_pieces[y2][x2]=self.total_pieces[y1][x1]
-            self.total_pieces[y2][x2].update_coordinates(x2,y2)
-            self.total_pieces[y1][x1]="-"
+            self.total_pieces[x2][y2]=self.total_pieces[x1][y1]
+            self.total_pieces[x2][y2].update_coordinates(x2,y2)
+            self.total_pieces[x1][y1]="-"
         else:
 
             print(self.total_pieces[y1][x1].color)
-            piece_to_remove=self.total_pieces[y1][x1]
+            piece_to_remove=self.total_pieces[x1][y1]
             if piece_to_remove.color == gameBoard.BLACK_ICON:
                 del self.black_pieces[piece_to_remove.piece_id]
             else:
                 del self.white_pieces[piece_to_remove.piece_id]
-            self.total_pieces[y1][x1]="-"
+            self.total_pieces[x1][y1]="-"
 
 
 
@@ -111,29 +111,29 @@ class gameBoard():
         print()
         if (abs(difference_x)==2 and abs(difference_y)==0) or (abs(difference_x)==0 and abs(difference_y)==2):
             print("1sttt")
-            if self.total_pieces[y2][x2] == '-':
+            if self.total_pieces[x2][y2] == '-':
                 if difference_y == 2:
                     print("2sttt")
 
-                    if self.total_pieces[y2-1][x2]=="-" or self.total_pieces[y2-1][x2].color == self.total_pieces[y1][x1].color:
+                    if self.total_pieces[x2][y2-1]=="-" or self.total_pieces[x2][y2-1].color == self.total_pieces[x1][y1].color:
                         return 0
                     else:
                         pieces_jumped.append([x2,y2-1])
                 if difference_y == -2:
                     print("3sttt")
-                    if self.total_pieces[y2+1][x2]=="-" or self.total_pieces[y2+1][x2].color == self.total_pieces[y1][x1].color:
+                    if self.total_pieces[x2][y2+1]=="-" or self.total_pieces[x2][y2+1].color == self.total_pieces[x1][y1].color:
                         return 0
                     else:
                         pieces_jumped.append([x2,y2+1])
                 if difference_x == 2:
                     print("4sttt")
-                    if self.total_pieces[y2][x2-1]=="-" or self.total_pieces[y2][x2-1].color == self.total_pieces[y1][x1].color:
+                    if self.total_pieces[x2-1][y2]=="-" or self.total_pieces[x2-1][y2].color == self.total_pieces[x1][y1].color:
                         return 0
                     else:
                         pieces_jumped.append([x2-1,y2])
                 if difference_x == -2:
                     print("5sttt")
-                    if self.total_pieces[y2][x2+1]=="-" or self.total_pieces[y2][x2+1].color == self.total_pieces[y1][x1].color:
+                    if self.total_pieces[x2+1][y2]=="-" or self.total_pieces[x2+1][y2].color == self.total_pieces[x1][y1].color:
                         return 0
                     else:
                         pieces_jumped.append([x2+1,y2])
@@ -153,25 +153,24 @@ class gameBoard():
         print("got here so",difference_x,difference_y)
         if(abs(difference_x)==2 and abs(difference_y)==0) or (abs(difference_x)==0 and abs(difference_y)==2):
             print("almosttttttt")
-            if self.total_pieces[y2][x2] == '-':
+            if self.total_pieces[x2][y2] == '-':
                 print("closer")
                 if difference_y == 2:
-                    if self.total_pieces[y2-1][x2]!="-" and self.total_pieces[y2-1][x2].color != self.total_pieces[y1][x1].color:
+                    if self.total_pieces[x2][y2-1]!="-" and self.total_pieces[x2][y2-1].color != self.total_pieces[x1][y1].color:
                         pieces_jumped.append([x2,y2-1])
 
                 if difference_y == -2:
-                    if self.total_pieces[y2+1][x2]!="-" and self.total_pieces[y2+1][x2].color != self.total_pieces[y1][x1].color:
+                    if self.total_pieces[x2][y2+1]!="-" and self.total_pieces[x2][y2+1].color != self.total_pieces[x1][y1].color:
                         pieces_jumped.append([x2,y2+1])
                 if difference_x == 2:
-                    print(self.total_pieces[y2][x2-1])
-                    print(self.total_pieces[y1][x1])
+
                     print("222222222")
 
-                    if self.total_pieces[y2][x2-1]!="-" and self.total_pieces[y2][x2-1].color != self.total_pieces[y1][x1].color:
+                    if self.total_pieces[x2-1][y2]!="-" and self.total_pieces[x2-1][y2].color != self.total_pieces[x1][y1].color:
                         pieces_jumped.append([x2-1,y2])
                 if difference_x == -2:
                     print("-222222222")
-                    if self.total_pieces[y2][x2+1]!="-" and self.total_pieces[y2][x2+1].color != self.total_pieces[y1][x1].color:
+                    if self.total_pieces[x2+1][y2]!="-" and self.total_pieces[x2+1][y2].color != self.total_pieces[x1][y1].color:
                         pieces_jumped.append([x2+1,y2])
 
 
@@ -180,7 +179,7 @@ class gameBoard():
     def remove_piece_from_board(self,x,y):
         print("remocing piece")
         piece = self.total_pieces[x][y]
-        self.total_pieces[y][x]="-"
+        self.total_pieces[x][y]="-"
         if piece.color == gameBoard.BLACK_ICON:
             del self.black_pieces[piece.piece_id]
         else:
@@ -213,8 +212,7 @@ class gameBoard():
         x2=int(dest[1])
         y2=int(dest[0])
         print("first check",x1,y1,x2,y2)
-        print("second check",self.total_pieces[y1][x1].color,self.total_pieces[y2][x2])
-        print("third check",self.total_pieces[y2][x2])
+
 
 
         pieces_to_remove_after_move=self.list_of_jumped_pieces(x1,y1,x2,y2)
@@ -228,9 +226,9 @@ class gameBoard():
 
 
     def move_piece_human(self,piece_coordinates,direction):
-        x1,y1 = piece_coordinates
-        x1 = int(x1)
-        y1 = int(y1)
+        row,col = piece_coordinates
+        x1 = int(col)
+        y1 = int(row)
         x2=None
         y2=None
         direction_returned=self.derive_coordinates(x1,y1,direction)
