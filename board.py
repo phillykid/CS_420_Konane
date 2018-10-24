@@ -83,6 +83,18 @@ class gameBoard():
             s=s+" \n"
         print(s)
 
+    def toString(self):
+        s=""
+        for h in range(self.height):
+            for w in range(self.width):
+                piece=self.total_pieces[h][w]
+                if not piece == "-":
+                    s=s+str(self.total_pieces[h][w].color)+"  "
+                else:
+                    s=s+"-- "
+            s=s+" \n"
+        return s
+
     def is_legal_move(self,x1,y1,x2,y2):
         print("dest coordinates: ",x2,y2)
         if(self.turn<3):
@@ -167,7 +179,7 @@ class gameBoard():
 
     def remove_piece_from_board(self,x,y):
         print("remocing piece")
-        piece = self.total_pieces[y][x]
+        piece = self.total_pieces[x][y]
         self.total_pieces[y][x]="-"
         if piece.color == gameBoard.BLACK_ICON:
             del self.black_pieces[piece.piece_id]
@@ -201,6 +213,8 @@ class gameBoard():
         x2=int(dest[1])
         y2=int(dest[0])
         print("first check",x1,y1,x2,y2)
+        print("second check",self.total_pieces[y1][x1].color,self.total_pieces[y2][x2])
+        print("third check",self.total_pieces[y2][x2])
 
 
         pieces_to_remove_after_move=self.list_of_jumped_pieces(x1,y1,x2,y2)
@@ -344,10 +358,10 @@ class gameBoard():
                 continue
             # print(destination_y,"sss")
             # print(destination_x,"ssss")
-            if self.total_pieces[destination_y][destination_x]=="-":
+            if self.total_pieces[destination_x][destination_y]=="-":
                 continue
             else:
-                if piece.color == self.total_pieces[destination_y][destination_x].color:
+                if piece.color == self.total_pieces[destination_x][destination_y].color:
                     continue
 
                 landing_x=move[0]+piece.x+move[0]
@@ -355,11 +369,14 @@ class gameBoard():
 
                 if not (self.width > landing_x > -1 and self.height > landing_y > -1):
                     continue
-                if self.total_pieces[landing_y][landing_x]=="-":
-                    print("color:",self.total_pieces[destination_y][destination_x].color)
+                if self.total_pieces[landing_x][landing_y]=="-":
+                    print("color:",self.total_pieces[destination_x][destination_y].color)
                     print(landing_x,landing_y)
+                    print(piece.x,piece.y)
+
                     print(piece.color)
-                    yield (piece,[landing_y,landing_x],self.turn+1)
+
+                    yield (piece,[landing_x,landing_y],self.turn+1)
 
 
     def evaluate_board_desiarbility(self):
