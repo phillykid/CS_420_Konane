@@ -8,17 +8,17 @@ Other formats are not guaranteed nor expected to work.
 """
 
 class gameBoard():
-    WHITE=1
-    BLACK=-1
+    WHITE=-1
+    BLACK=1
     STILLPLAYING=0
-    BLACK_ICON="1"  #black circle
-    WHITE_ICON="0"
+    BLACK_ICON="B"  #black circle
+    WHITE_ICON="W"
 
 
     def add_piece(self,color,cost,x,y):
         current_piece = gamePiece(color,cost,x,y)
 
-        if color == 1:
+        if color == gameBoard.BLACK_ICON:
             self.total_pieces[current_piece.x][current_piece.y]=current_piece
             self.black_pieces[current_piece.piece_id]=current_piece
         else:
@@ -29,18 +29,14 @@ class gameBoard():
     def update_game_piece_position(self,x1,y1,x2, y2):
         if not (x2 == None and y2 ==None):
             print(x1,y1,x2,y2,"babababbaba")
-            self.print_board()
             self.total_pieces[y2][x2]=self.total_pieces[y1][x1]
-            print("check_this",self.total_pieces[y2][x2])
             self.total_pieces[y2][x2].update_coordinates(x2,y2)
             self.total_pieces[y1][x1]="-"
-            self.print_board()
-            print("uuuuuuuuuuuuuuuu")
         else:
 
             print(self.total_pieces[y1][x1].color)
             piece_to_remove=self.total_pieces[y1][x1]
-            if piece_to_remove.color == 1:
+            if piece_to_remove.color == gameBoard.BLACK_ICON:
                 del self.black_pieces[piece_to_remove.piece_id]
             else:
                 del self.white_pieces[piece_to_remove.piece_id]
@@ -49,7 +45,7 @@ class gameBoard():
 
 
 
-    def __init__(self, height, width, startingPlayer):
+    def __init__(self, height, width,computer_is_first):
         """
         Constructs a board with given dimensions and sets the inital player turn ordering.
         """
@@ -57,24 +53,22 @@ class gameBoard():
         self.width=width
         self.height=height
         self.turn=1
+        self.computer_is_first=computer_is_first
         self.total_pieces=[[" " for x in range(width)] for y in range(width)]
         self.black_pieces={}
         self.white_pieces={}
 
+        self.draw_board(width,height)
+        self.gameWon = self.STILLPLAYING
+        self.maxDepth = 10
+
+    def draw_board(self,width,height):
         for i in range(width):
             for j in range(height):
                 if (j+i)%2 == 0:
-                    self.add_piece(1,1,i,j)
+                    self.add_piece(gameBoard.BLACK_ICON,1,i,j)
                 else:
-                    self.add_piece(0,-1,i,j)
-
-
-        self.gameWon = self.STILLPLAYING
-        self.turn = startingPlayer
-        self.maxDepth = 10
-
-
-
+                    self.add_piece(gameBoard.WHITE_ICON,-1,i,j)
 
 
     def print_board(self):
@@ -90,11 +84,10 @@ class gameBoard():
         print(s)
 
     def is_legal_move(self,x1,y1,x2,y2):
+        print("dest coordinates: ",x2,y2)
         if(self.turn<3):
-            print("dadadddaaddaadda")
             legal_moves = self.first_two_moves_picker(1)
             if [x1,y1] in legal_moves:
-                print("jjjjjj")
                 return 1
             return 0
 
@@ -130,48 +123,40 @@ class gameBoard():
 
 
     def list_of_jumped_pieces(self,x1,y1,x2,y2):
-        print("printing...")
         print(x1,y1,x2,y2)
         if(x2 == None or y2== None):
-            print("crap")
             return []
         difference_x=int(x2)-int(x1)
         difference_y=int(y2)-int(y1)
-        print(difference_x,difference_y,"heloooooooooooooooooooooooo")
         pieces_jumped = []
         if((abs(difference_x==2) and abs(difference_y==0)) or (abs(difference_x)==0 and abs(difference_y==2))):
-            print("ugh")
             if self.total_pieces[y2][x2] == '-':
-                print("maybeeeee")
                 if difference_y == 2:
-                    print("idk sf4344444fs")
                     if self.total_pieces[y2-1][x2].color != self.total_pieces[y1][x1].color:
                         pieces_jumped.append([x2,y2-1])
-                        print("dope1")
 
                 if difference_y == -2:
                     if self.total_pieces[y2+1][x2].color != self.total_pieces[y1][x1].color:
                         pieces_jumped.append([x2,y2+1])
-                        print("dope2")
                 if difference_x == 2:
-                    print("idk anymore")
+                    print(self.total_pieces[y2][x2-1])
+                    print(self.total_pieces[y1][x1])
+
                     if self.total_pieces[y2][x2-1].color != self.total_pieces[y1][x1].color:
                         pieces_jumped.append([x2-1,y2])
-                        print("dope3")
                 if difference_x == -2:
-                    print("idk sfsfsffs")
 
                     if self.total_pieces[y2][x2+1].color != self.total_pieces[y1][x1].color:
                         pieces_jumped.append([x2+1,y2])
-                        print("dope4")
 
 
         return pieces_jumped
 
     def remove_piece_from_board(self,x,y):
+        print("remocing piece")
         piece = self.total_pieces[y][x]
         self.total_pieces[y][x]="-"
-        if piece.color == 1:
+        if piece.color == gameBoard.BLACK_ICON:
             del self.black_pieces[piece.piece_id]
         else:
             del self.white_pieces[piece.piece_id]
@@ -181,13 +166,13 @@ class gameBoard():
 
     def derive_coordinates(self,x1,y1,direction):
         if direction == 'u':
-            return x1,y1+1
+            return x1,y1-2
         if direction == 'd':
-            return x1,y1-1
+            return x1,y1+2
         if direction == 'l':
-            return x1-1,y1
+            return x1-2,y1
         if direction == 'r':
-            return x1+1,y1
+            return x1+2,y1
         if direction == 'p':
             return None,None
 
@@ -195,12 +180,15 @@ class gameBoard():
         x1,y1 = piece_coordinates
         x1 = int(x1)
         y1 = int(y1)
+
         if dest=="--":
             self.remove_piece_from_board(x1,y1)
             self.turn=self.turn+1
             return
-        x2=int(dest[0])
+        x2=int(dest[1])
         y2=int(dest[0])
+        print("first check",x1,y1,x2,y2)
+
 
         pieces_to_remove_after_move=self.list_of_jumped_pieces(x1,y1,x2,y2)
         self.update_game_piece_position(x1,y1,x2,y2)
@@ -233,6 +221,7 @@ class gameBoard():
                 return 0
 
 
+
         print(x1+y1)
         print(type(x1+y1))
         if(direction == 'p'):
@@ -241,11 +230,11 @@ class gameBoard():
             self.update_game_piece_position(x1,y1,x2,y2)
             for piece in self.list_of_jumped_pieces(x1,y1,x2,y2):
                 self.remove_piece_from_board(piece[0],piece[1])
+                print("sqqqqqqqqqqqqqqqqqqqqqqqq")
         self.turn=self.turn+1
+        return 1
 
 
-    def check_is_move_legal(self,move):
-        return 0
 
 
 
@@ -284,7 +273,6 @@ class gameBoard():
         if self.turn == 1:
                 print("did")
         else:
-            print("dont")
             white_has_to_pick_adjacent = None
             for it in coordinates:
                 print(it)
@@ -295,7 +283,6 @@ class gameBoard():
             if legal_check==1:
                 return self.generate_set_of_legal_moves_for_second_move(adj_x,adj_y)
             white_choice = random.choice(self.generate_set_of_legal_moves_for_second_move(adj_x,adj_y))
-            print("daddadadadaD",white_choice)
             x=white_choice[0]
             y=white_choice[1]
 
@@ -346,7 +333,6 @@ class gameBoard():
             # print(destination_y,"sss")
             # print(destination_x,"ssss")
             if self.total_pieces[destination_y][destination_x]=="-":
-                print("yogogogogogogog")
                 continue
             else:
                 if piece.color == self.total_pieces[destination_y][destination_x].color:
@@ -358,7 +344,6 @@ class gameBoard():
                 if not (self.width > landing_x > -1 and self.height > landing_y > -1):
                     continue
                 if self.total_pieces[landing_y][landing_x]=="-":
-                    print("wtffffffffffff")
                     print("color:",self.total_pieces[destination_y][destination_x].color)
                     print(landing_x,landing_y)
                     print(piece.color)

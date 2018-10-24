@@ -1,3 +1,5 @@
+from board import *
+
 class pieceTracker():
     def __init__(self,rows):
         self.total_pieces=[[0 for x in range(rows)] for y in range(rows)]
@@ -7,7 +9,7 @@ class pieceTracker():
     def add_piece(self,color,cost,x,y):
         current_piece = gamePiece(color,cost,x,y)
 
-        if color == 1:
+        if color == gameBoard.BLACK_ICON:
             self.total_pieces[current_piece.x][current_piece.y]=current_piece
             self.black_pieces[current_piece.piece_id]=current_piece
         else:
