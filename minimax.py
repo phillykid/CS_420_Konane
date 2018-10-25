@@ -9,14 +9,14 @@ def minimax(board,depth,depth_limit):
     if current_depth==depth_limit:
         return board,board.evaluate_board_desiarbility(),None
 
-    if board.turn==1:
+    if board.turn==0:
         best_score=float('-inf')
         piece,move,turn=board.first_two_moves_picker(0)
         best_board=deepcopy(board)
         best_board.move_piece_computer(str(piece.x)+str(piece.y),move)
         best_move=str(piece.x)+str(piece.y),move
 
-    if board.turn==2:
+    if board.turn==1:
         best_score=float('inf')
         piece,move,turn=board.first_two_moves_picker(0)
         best_board=deepcopy(board)
@@ -25,7 +25,7 @@ def minimax(board,depth,depth_limit):
 
 
 
-    elif board.turn%2==1 and board.turn != 1 and board.turn != 2:
+    elif board.turn%2==1 and board.turn != 0 and board.turn != 1:
         best_score=float('-inf')
         print('blacks turn')
         print(board.turn)

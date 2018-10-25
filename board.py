@@ -29,6 +29,7 @@ class gameBoard():
     def update_game_piece_position(self,x1,y1,x2, y2):
         if not (x2 == None and y2 ==None):
             print(x1,y1,x2,y2,"babababbaba")
+            print(x2 == None and y2 ==None,"pppppppppp")
             self.total_pieces[x2][y2]=self.total_pieces[x1][y1]
             self.total_pieces[x2][y2].update_coordinates(x2,y2)
             self.total_pieces[x1][y1]="-"
@@ -52,7 +53,7 @@ class gameBoard():
 
         self.width=width
         self.height=height
-        self.turn=1
+        self.turn=0
         self.computer_is_first=computer_is_first
         self.total_pieces=[[" " for x in range(width)] for y in range(width)]
         self.black_pieces={}
@@ -91,13 +92,14 @@ class gameBoard():
                 if not piece == "-":
                     s=s+str(self.total_pieces[h][w].color)+"  "
                 else:
-                    s=s+"-- "
-            s=s+" \n"
+                    s=s+"--- "
+            s=s+"\n"
+        s=s+"Turn:"+str(self.turn)
         return s
 
     def is_legal_move(self,x1,y1,x2,y2):
         print("dest coordinates: ",x2,y2)
-        if(self.turn<3):
+        if(self.turn<2):
             legal_moves = self.first_two_moves_picker(1)
             if [x1,y1] in legal_moves:
                 return 1
@@ -294,7 +296,7 @@ class gameBoard():
                      [int(self.width/2),int(self.height/2)],
                      [int((self.width/2)-1),int((self.height/2)-1)]]
 
-        if self.turn == 1:
+        if self.turn == 0:
                 print("did")
         else:
             white_has_to_pick_adjacent = None
@@ -378,9 +380,9 @@ class gameBoard():
 
 
     def evaluate_board_desiarbility(self):
-        if self.gameWon==1 and self.turn==0:
+        if self.gameWon==1 and self.turn%2==0:
             return float('inf')
-        if self.gameWon==1 and self.turn==1:
+        if self.gameWon==1 and self.turn%2==1:
             return float('-inf')
 
         desirability=0
