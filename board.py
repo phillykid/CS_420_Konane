@@ -382,7 +382,7 @@ class gameBoard():
 
                     print(piece.color)
 
-                    yield (piece,[landing_x,landing_y],self.turn+1)
+                    yield (piece,[landing_y,landing_x],self.turn+1)
 
 
     def evaluate_board_desiarbility(self):

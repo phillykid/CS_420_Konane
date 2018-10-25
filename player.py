@@ -24,6 +24,9 @@ class ComputerSimplePlayer():
     def getMove(self,board):
         bboard,score,move= minimax(board,0,self.depth_limit)
         print("Move:",move)
+        if move==None:
+            print("GAME LOSTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
+            return
         board.move_piece_computer(move[0],move[1])
 
 
