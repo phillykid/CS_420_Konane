@@ -27,14 +27,16 @@ class gameBoard():
         return color
 
     def update_game_piece_position(self,x1,y1,x2, y2):
+        print("Updating here")
         if not (x2 == None and y2 ==None):
             print(x1,y1,x2,y2,"babababbaba")
             print(x2 == None and y2 ==None,"pppppppppp")
+            self.last_move="["+str(x1)+","+str(y1)+"]"+" to "+"["+str(x2)+","+str(y2)+"]"+"piece color: "+self.total_pieces[x1][y1].color
             self.total_pieces[x2][y2]=self.total_pieces[x1][y1]
             self.total_pieces[x2][y2].update_coordinates(x2,y2)
             self.total_pieces[x1][y1]="-"
         else:
-
+            self.last_move="Removed ["+str(x1)+","+str(y1)+"]"+"piece color: "+self.total_pieces[x1][y1].color
             print(self.total_pieces[y1][x1].color)
             piece_to_remove=self.total_pieces[x1][y1]
             if piece_to_remove.color == gameBoard.BLACK_ICON:
@@ -42,6 +44,9 @@ class gameBoard():
             else:
                 del self.white_pieces[piece_to_remove.piece_id]
             self.total_pieces[x1][y1]="-"
+
+
+
 
 
 
@@ -58,6 +63,7 @@ class gameBoard():
         self.total_pieces=[[" " for x in range(width)] for y in range(width)]
         self.black_pieces={}
         self.white_pieces={}
+        self.last_move="No moves"
 
         self.draw_board(width,height)
         self.gameWon = self.STILLPLAYING
@@ -94,7 +100,7 @@ class gameBoard():
                 else:
                     s=s+"--- "
             s=s+"\n"
-        s=s+"Turn:"+str(self.turn)
+        s=s+"Turn:"+str(self.turn)+"\n"+"Last Move: "+self.last_move
         return s
 
     def is_legal_move(self,x1,y1,x2,y2):
@@ -206,9 +212,9 @@ class gameBoard():
         x1,y1 = piece_coordinates
         x1 = int(x1)
         y1 = int(y1)
-
+        print("computer moving",dest)
         if dest=="--":
-            self.remove_piece_from_board(x1,y1)
+            self.update_game_piece_position(x1,y1,None,None)
             self.turn=self.turn+1
             return
         x2=int(dest[1])

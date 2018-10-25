@@ -25,28 +25,28 @@ def minimax(board,depth,depth_limit):
 
 
 
-    elif board.turn%2==1 and board.turn != 0 and board.turn != 1:
-        best_score=float('-inf')
-        print('blacks turn')
+    elif board.turn%2==1 and board.turn != 1:
+        best_score=float('inf')
+        print('white turn')
         print(board.turn)
-        for piece,move in board.expand_black_moves():
+        for piece,move in board.expand_white_moves():
             best_board=deepcopy(board)
             best_board.move_piece_computer(str(piece.x)+str(piece.y),move[1])
             minimax_board,minimax_returned_score,minimax_move = minimax(best_board,current_depth,depth_limit)
             print("minmax: ",minimax_returned_score )
-            if minimax_returned_score > best_score:
+            if minimax_returned_score < best_score:
                 best_move=str(piece.x)+str(piece.y),move[1]
                 best_score=minimax_returned_score
 
     else:
-        print('whitess turn')
-        best_score=float('inf')
+        print('black turn')
+        best_score=float('-inf')
 
-        for piece,move in board.expand_white_moves():
+        for piece,move in board.expand_black_moves():
             best_board=deepcopy(board)
             best_board.move_piece_computer(str(piece.x)+str(piece.y),move[1])
             minimax_board,minimax_returned_score,minimax_move= minimax(best_board,current_depth,depth_limit)
-            if minimax_returned_score < best_score:
+            if minimax_returned_score > best_score:
                 best_move=str(piece.x)+str(piece.y),move[1]
                 best_score=minimax_returned_score
 
