@@ -11,6 +11,8 @@ class gameBoard():
     WHITE=-1
     BLACK=1
     STILLPLAYING=0
+    BLACKWON=1
+    WHITEWON=-1
     BLACK_ICON="B"  #black circle
     WHITE_ICON="W"
 
@@ -27,17 +29,13 @@ class gameBoard():
         return color
 
     def update_game_piece_position(self,x1,y1,x2, y2):
-        print("Updating here")
         if not (x2 == None and y2 ==None):
-            print(x1,y1,x2,y2,"babababbaba")
-            print(x2 == None and y2 ==None,"pppppppppp")
             self.last_move="["+str(x1)+","+str(y1)+"]"+" to "+"["+str(x2)+","+str(y2)+"]"+"piece color: "+self.total_pieces[x1][y1].color
             self.total_pieces[x2][y2]=self.total_pieces[x1][y1]
             self.total_pieces[x2][y2].update_coordinates(x2,y2)
             self.total_pieces[x1][y1]="-"
         else:
             self.last_move="Removed ["+str(x1)+","+str(y1)+"]"+"piece color: "+self.total_pieces[x1][y1].color
-            print(self.total_pieces[y1][x1].color)
             piece_to_remove=self.total_pieces[x1][y1]
             if piece_to_remove.color == gameBoard.BLACK_ICON:
                 del self.black_pieces[piece_to_remove.piece_id]
@@ -98,49 +96,40 @@ class gameBoard():
                 if not piece == "-":
                     s=s+str(self.total_pieces[h][w].color)+"  "
                 else:
-                    s=s+"--- "
+                    s=s+"-- "
             s=s+"\n"
         s=s+"Turn:"+str(self.turn)+"\n"+"Last Move: "+self.last_move
         return s
 
     def is_legal_move(self,x1,y1,x2,y2):
-        print("dest coordinates: ",x2,y2)
         if(self.turn<2):
             legal_moves = self.first_two_moves_picker(1)
             if [x1,y1] in legal_moves:
                 return 1
             return 0
 
-        print(x2,x1)
         difference_x=int(x2)-int(x1)
         difference_y=int(y2)-int(y1)
         pieces_jumped = []
-        print("yodoododo")
-        print()
         if (abs(difference_x)==2 and abs(difference_y)==0) or (abs(difference_x)==0 and abs(difference_y)==2):
-            print("1sttt")
             if self.total_pieces[x2][y2] == '-':
                 if difference_y == 2:
-                    print("2sttt")
 
                     if self.total_pieces[x2][y2-1]=="-" or self.total_pieces[x2][y2-1].color == self.total_pieces[x1][y1].color:
                         return 0
                     else:
                         pieces_jumped.append([x2,y2-1])
                 if difference_y == -2:
-                    print("3sttt")
                     if self.total_pieces[x2][y2+1]=="-" or self.total_pieces[x2][y2+1].color == self.total_pieces[x1][y1].color:
                         return 0
                     else:
                         pieces_jumped.append([x2,y2+1])
                 if difference_x == 2:
-                    print("4sttt")
                     if self.total_pieces[x2-1][y2]=="-" or self.total_pieces[x2-1][y2].color == self.total_pieces[x1][y1].color:
                         return 0
                     else:
                         pieces_jumped.append([x2-1,y2])
                 if difference_x == -2:
-                    print("5sttt")
                     if self.total_pieces[x2+1][y2]=="-" or self.total_pieces[x2+1][y2].color == self.total_pieces[x1][y1].color:
                         return 0
                     else:
@@ -151,18 +140,14 @@ class gameBoard():
 
 
     def list_of_jumped_pieces(self,x1,y1,x2,y2):
-        print(x1,y1,x2,y2)
         if(x2 == None or y2== None):
             return []
         difference_x=int(x2)-int(x1)
         difference_y=int(y2)-int(y1)
         pieces_jumped = []
 
-        print("got here so",difference_x,difference_y)
         if(abs(difference_x)==2 and abs(difference_y)==0) or (abs(difference_x)==0 and abs(difference_y)==2):
-            print("almosttttttt")
             if self.total_pieces[x2][y2] == '-':
-                print("closer")
                 if difference_y == 2:
                     if self.total_pieces[x2][y2-1]!="-" and self.total_pieces[x2][y2-1].color != self.total_pieces[x1][y1].color:
                         pieces_jumped.append([x2,y2-1])
@@ -171,13 +156,9 @@ class gameBoard():
                     if self.total_pieces[x2][y2+1]!="-" and self.total_pieces[x2][y2+1].color != self.total_pieces[x1][y1].color:
                         pieces_jumped.append([x2,y2+1])
                 if difference_x == 2:
-
-                    print("222222222")
-
                     if self.total_pieces[x2-1][y2]!="-" and self.total_pieces[x2-1][y2].color != self.total_pieces[x1][y1].color:
                         pieces_jumped.append([x2-1,y2])
                 if difference_x == -2:
-                    print("-222222222")
                     if self.total_pieces[x2+1][y2]!="-" and self.total_pieces[x2+1][y2].color != self.total_pieces[x1][y1].color:
                         pieces_jumped.append([x2+1,y2])
 
@@ -185,7 +166,6 @@ class gameBoard():
         return pieces_jumped
 
     def remove_piece_from_board(self,x,y):
-        print("remocing piece")
         piece = self.total_pieces[x][y]
         self.total_pieces[x][y]="-"
         if piece.color == gameBoard.BLACK_ICON:
@@ -212,14 +192,12 @@ class gameBoard():
         x1,y1 = piece_coordinates
         x1 = int(x1)
         y1 = int(y1)
-        print("computer moving",dest)
         if dest=="--":
             self.update_game_piece_position(x1,y1,None,None)
             self.turn=self.turn+1
             return
-        x2=int(dest[1])
-        y2=int(dest[0])
-        print("first check",x1,y1,x2,y2)
+        x2=int(dest[0])
+        y2=int(dest[1])
 
 
 
@@ -227,7 +205,6 @@ class gameBoard():
         self.update_game_piece_position(x1,y1,x2,y2)
 
         for piece in pieces_to_remove_after_move:
-            print("looping")
             self.remove_piece_from_board(piece[0],piece[1])
 
         self.turn=self.turn+1
@@ -253,8 +230,7 @@ class gameBoard():
 
 
 
-        print(x1+y1)
-        print(type(x1+y1))
+
         if(direction == 'p'):
             self.update_game_piece_position(x1,y1,None, None)
         else:
@@ -262,7 +238,6 @@ class gameBoard():
             self.update_game_piece_position(x1,y1,x2,y2)
             for piece in jumped:
                 self.remove_piece_from_board(piece[0],piece[1])
-                print("sqqqqqqqqqqqqqqqqqqqqqqqq")
         self.turn=self.turn+1
         return 1
 
@@ -284,8 +259,6 @@ class gameBoard():
     def expand_black_moves(self):
         for key, piece in self.black_pieces.items():
             for move in self.expand_moves_for_piece(piece):
-                print(piece.x,piece.y,"black move predicted")
-                print(move[1][0])
                 yield piece,move
 
 
@@ -303,11 +276,11 @@ class gameBoard():
                      [int((self.width/2)-1),int((self.height/2)-1)]]
 
         if self.turn == 0:
-                print("did")
+            return (random.choice(pieces),"--",self.turn+1)
+
         else:
             white_has_to_pick_adjacent = None
             for it in coordinates:
-                print(it)
                 x=it[0]
                 y=it[1]
                 if self.total_pieces[x][y]=='-':
@@ -319,7 +292,6 @@ class gameBoard():
             y=white_choice[1]
 
             return self.total_pieces[y][x],"--",self.turn+1
-        return (random.choice(pieces),"--",self.turn+1)
 
 
     def generate_set_of_legal_moves_for_second_move(self,adjacent_x,adjacent_y):
@@ -376,13 +348,7 @@ class gameBoard():
                 if not (self.width > landing_x > -1 and self.height > landing_y > -1):
                     continue
                 if self.total_pieces[landing_x][landing_y]=="-":
-                    print("color:",self.total_pieces[destination_x][destination_y].color)
-                    print(landing_x,landing_y)
-                    print(piece.x,piece.y)
-
-                    print(piece.color)
-
-                    yield (piece,[landing_y,landing_x],self.turn+1)
+                    yield (piece,[landing_x,landing_y],self.turn+1)
 
 
     def evaluate_board_desiarbility(self):
@@ -399,6 +365,21 @@ class gameBoard():
             desirability+=value.cost
 
         return desirability
+
+    def player_has_no_moves(self,turn_color):
+        print("yo this",turn_color)
+        print("ALBERTTTTTTTTTTTTTTTTTTTTTTTTTT")
+        print("BLACK MOVES LEFT:")
+        for piece,move in self.expand_black_moves():
+            print(piece.x,piece.y,move[0],move[1])
+        print("White MOVES LEFT:")
+        for piece,move in self.expand_white_moves():
+            print(piece.x,piece.y,move[0],move[1])
+        if turn_color==gameBoard.BLACK_ICON:
+            self.gameWon=gameBoard.WHITEWON
+        else:
+            self.gameWon=gameBoard.BLACKWON
+
 
 
 
