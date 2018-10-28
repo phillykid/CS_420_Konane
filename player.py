@@ -29,7 +29,7 @@ class ComputerSimplePlayer():
             board.player_has_no_moves(self.color)
             print(board.gameWon)
             return
-        board.move_piece_computer(move[0],move[1])
+        board.computer_move(move[0],move[1])
 
 
 
