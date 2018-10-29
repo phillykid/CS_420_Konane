@@ -607,16 +607,88 @@ class gameBoard():
 
     # This will be our utility function that we will use to value certain moves over others
 
-    def utility(self):
-        if self.gameWon == 1 and self.turn % 2 == 0:
-            return float('inf')
-        if self.gameWon == 1 and self.turn % 2 == 1:
-            return float('-inf')
+    def game_over(self):
+        black_has_moves=0
+        white_has_moves=0
+
+
+        for piece, move in self.expand_black_moves():
+            black_has_moves=1
+            break
+
+        for piece, move in self.expand_white_moves():
+            white_has_moves=1
+            break
+
+        if black_has_moves==0 and self.turn%2==0:
+            return float("-inf")
+        if white_has_moves==0 and self.turn%2==1:
+            return float("inf")
+
+        return 0
+
+    def utility(self,eval):
+        if eval == 1:
+            return self.utility_number_of_pieces()
+        if eval == 2:
+            return self.utility_number_of_ally_moves()
+        if eval == 3:
+            return self.utility_number_of_enemy_moves()
+        if eval == 4:
+            return self.utility_number_of_ally_vs_enemy_moves()
+
+
+
+    def utility_number_of_pieces(self):
+        game_status=self.game_over()
+        if game_status != 0:
+            return game_status
 
         desirability = 0
 
         for key, value in self.black_pieces.items():
             desirability += value.cost
+
         for key, value in self.white_pieces.items():
             desirability += value.cost
+        return desirability
+
+    def utility_number_of_ally_moves(self):
+        game_status=self.game_over()
+        if game_status != 0:
+            return game_status
+
+        desirability = 0
+        if self.turn%2==0:
+            for piece, move in self.expand_black_moves():
+                desirability += 1
+        else:
+            for piece, move in self.expand_white_moves():
+                desirability += -1
+        return desirability
+
+    def utility_number_of_enemy_moves(self):
+        game_status=self.game_over()
+        if game_status != 0:
+            return game_status
+
+        desirability = 0
+        if self.turn%2==0:
+            desirability -= len(list(self.expand_white_moves()))
+
+        else:
+            desirability += len(list(self.expand_black_moves()))
+        return desirability
+
+    def utility_number_of_ally_vs_enemy_moves(self):
+        game_status=self.game_over()
+        if game_status != 0:
+            return game_status
+
+        desirability = 0
+
+        for piece, move in self.expand_black_moves():
+            desirability += 1
+        for piece, move in self.expand_white_moves():
+            desirability -= 1
         return desirability
