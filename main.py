@@ -61,7 +61,7 @@ b = gameBoard(8, 8, 1)
 
 print("INITIAL BOARD SETUP:")
 print(b)
-"""
+
 # First we have to do preliminary moves
 print()
 print("BLACK REMOVES A PIECE: ")
@@ -76,12 +76,12 @@ b.computer_move(str(white_piece.x)+str(white_piece.y), white_choice)
 print(b)
 
 # End of preliminary moves
-"""
+
 
 
 #hp=HumanPlayer("W","B")
-cp=ComputerSimplePlayer("B","W",4)
-cp2=ComputerCastlePlayer("W","B",4)
+cp=ComputerSimplePlayer("B","W",2)
+cp2=ComputerSimplePlayer("W","B",2)
 
 #print(b.evaluate_board_desiarbility())
 #print(b.print_w())
@@ -97,6 +97,6 @@ while(b.gameWon == gameBoard.STILLPLAYING):
         b.print_board()
         board1.set(b.toString())
         root.update()
-get_stats()
+#get_stats()
 print("--- %s seconds ---" % (time.time() - start_time))
 print("--- seconds per turn ---" ,(time.time() - start_time)/b.turn)

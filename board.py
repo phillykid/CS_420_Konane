@@ -1,6 +1,7 @@
 # Game Board requires height and width dimensions.
 from piece import *
 import random
+from sys import maxsize
 
 """
 GameBoard has been to designed to work with 6x6 or 8x8 boards.
@@ -621,9 +622,11 @@ class gameBoard():
             break
 
         if black_has_moves==0 and self.turn%2==0:
-            return float("-inf")
+            return -100000000000
+            #return float("-inf")
         if white_has_moves==0 and self.turn%2==1:
-            return float("inf")
+            return 100000000000
+            #return float("inf")
 
         return 0
 

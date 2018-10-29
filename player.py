@@ -32,8 +32,8 @@ class ComputerSimplePlayer():
         self.depth_limit=depth_limit
 
     def getMove(self,board):
-        bboard,score,move= Minimax_tracker.minimax(board,0,self.depth_limit,1)
-        #move = alpha_beta_pruning(board, 0, self.depth_limit)
+        #bboard,score,move= Minimax_tracker.minimax(board,0,self.depth_limit,1)
+        move = alpha_beta_pruning(board, 0, self.depth_limit)
         print("Move:",move)
         if move==None:
             print(self.color,"GAME LOSTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")

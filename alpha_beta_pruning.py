@@ -1,4 +1,5 @@
 from copy import deepcopy
+from sys import maxsize
 
 
 # Remember the notation argmax a which is an element of S f(a)
@@ -33,7 +34,7 @@ def max_value(board_state, depth, depth_limit, alpha, beta):
     resulting_state = deepcopy(board_state)
     terminal_check = resulting_state.terminal_state(resulting_state.BLACK_ICON)
     if terminal_check or depth > depth_limit:
-        return resulting_state.utility(), primary_action
+        return resulting_state.utility(2), primary_action
 
     # Otherwise run through the algorithm
     v = float('-inf')
@@ -73,7 +74,7 @@ def min_value(board_state, depth, depth_limit, alpha, beta):
     resulting_state = deepcopy(board_state)
     terminal_check = resulting_state.terminal_state(resulting_state.WHITE_ICON)
     if terminal_check or depth > depth_limit:
-        return resulting_state.utility(), primary_action
+        return resulting_state.utility(2), primary_action
 
     # Otherwise run the algorithm
     v = float('inf')

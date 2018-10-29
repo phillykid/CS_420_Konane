@@ -55,7 +55,7 @@ class Minimax_tracker():
                 best_board.computer_move(str(piece.x)+str(piece.y), move[1])
                 minimax_board,minimax_returned_score,minimax_move = Minimax_tracker.minimax(best_board,current_depth,depth_limit,eval)
                 #print("minmax: ",minimax_returned_score )
-                if minimax_returned_score < best_score:
+                if minimax_returned_score <= best_score:
                     best_move = str(piece.x)+str(piece.y), move[1]
                     best_score = minimax_returned_score
 
@@ -76,7 +76,7 @@ class Minimax_tracker():
                 best_board=deepcopy(board)
                 best_board.computer_move(str(piece.x)+str(piece.y), move[1])
                 minimax_board,minimax_returned_score,minimax_move = Minimax_tracker.minimax(best_board,current_depth,depth_limit,eval)
-                if minimax_returned_score > best_score:
+                if minimax_returned_score >= best_score:
                     best_move=str(piece.x)+str(piece.y), move[1]
                     best_score=minimax_returned_score
             #print("Depth]]]]]]]]]]]]]]]]", current_depth)
