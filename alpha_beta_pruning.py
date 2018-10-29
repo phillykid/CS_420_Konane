@@ -13,15 +13,13 @@ def alpha_beta_pruning(board_state, depth, depth_limit):
     # As soon as this starts we are going down to depth 1
     # Initially alpa and beta are -infinity and +infinity respectively
     if board_state.turn % 2 == 0:
-        #print("Dealing with black first")
         # This means we are starting with a black move
         v, action = max_value(board_state, depth + 1, depth_limit, float('-inf'), float('inf'))
     elif board_state.turn % 2 == 1:
-        #print("Going to white first")
         # This means that we are starting with a white move
         v, action = min_value(board_state, depth + 1, depth_limit, float('-inf'), float('inf'))
+
     # We have to return the action that has the same value of v
-    #print(board_state.turn)
     return action
 
 

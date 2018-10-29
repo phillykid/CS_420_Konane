@@ -606,6 +606,7 @@ class gameBoard():
         return False
 
     # This will be our utility function that we will use to value certain moves over others
+
     def utility(self):
         if self.gameWon == 1 and self.turn % 2 == 0:
             return float('inf')

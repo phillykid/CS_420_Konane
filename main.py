@@ -61,7 +61,7 @@ b = gameBoard(8, 8, 1)
 
 print("INITIAL BOARD SETUP:")
 print(b)
-
+"""
 # First we have to do preliminary moves
 print()
 print("BLACK REMOVES A PIECE: ")
@@ -74,7 +74,10 @@ print("WHITE REMOVES A PIECE: ")
 white_piece, white_choice, turn = b.first_two_moves_picker(0)
 b.computer_move(str(white_piece.x)+str(white_piece.y), white_choice)
 print(b)
+
 # End of preliminary moves
+"""
+
 
 #hp=HumanPlayer("W","B")
 cp=ComputerSimplePlayer("B","W",4)
