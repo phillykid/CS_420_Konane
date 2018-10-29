@@ -10,16 +10,17 @@ Other formats are not guaranteed nor expected to work.
 
 
 class gameBoard():
-    WHITE = -1
-    BLACK = 1
+    WHITE = -1 #piece value
+    BLACK = 1  #piece value
     STILLPLAYING = 0
     BLACKWON = 1
     WHITEWON = -1
-    BLACK_ICON = "B"  # black circle
-    WHITE_ICON = "W"
+    BLACK_ICON = "B"  # black symb
+    WHITE_ICON = "W"  # white symb
 
-    def add_piece(self, color, cost, x, y):
-        current_piece = gamePiece(color, cost, x, y)
+    #Adds a game piece to the board and the relevant players piece list
+    def add_piece(self, color, value, x, y):
+        current_piece = gamePiece(color, value, x, y)
 
         if color == gameBoard.BLACK_ICON:
             self.total_pieces[current_piece.x][current_piece.y] = current_piece
@@ -29,6 +30,7 @@ class gameBoard():
             self.white_pieces[current_piece.piece_id] = current_piece
         return color
 
+    #Moves the pieces around/removes them one a move is inputted
     def update_game_piece_position(self, x1, y1, x2, y2):
         if not (x2 == None and y2 == None):
             self.last_move = "[" + str(x1) + "," + str(y1) + "]" + " to " + "[" + str(x2) + "," + str(
@@ -41,26 +43,24 @@ class gameBoard():
                 y1].color
             piece_to_remove = self.total_pieces[x1][y1]
             if piece_to_remove.color == gameBoard.BLACK_ICON:
-                del self.black_pieces[piece_to_remove.piece_id]
+                del self.black_pieces[piece_to_remove.piece_id] #deletes the piece from the player's piece list
             else:
-                del self.white_pieces[piece_to_remove.piece_id]
+                del self.white_pieces[piece_to_remove.piece_id] #deletes the piece from the player's piece list
             self.total_pieces[x1][y1] = "-"
 
-    def __init__(self, height, width, computer_is_first):
+    def __init__(self, height, width):
         """
-        Constructs a board with given dimensions and sets the inital player turn ordering.
+        Constructs a board with given dimensions and sets the initial player turn ordering.
         """
 
         self.width = width
         self.height = height
         self.turn = 0
-        self.computer_is_first = computer_is_first
         self.total_pieces = [[" " for x in range(width)] for y in range(width)]
         self.black_pieces = {}
         self.white_pieces = {}
-        self.last_move = "No moves"
-
-        self.draw_board(width, height)
+        self.last_move = "No moves" #Used for printing to the GUI
+        self.draw_board(width, height) #Generates the Initial board state
         self.gameWon = self.STILLPLAYING
         self.maxDepth = 10
 
@@ -143,6 +143,7 @@ class gameBoard():
 
         return 0
 
+    #This is called to calculate pieces which need to be removed given a move
     def list_of_jumped_pieces(self, x1, y1, x2, y2):
         if (x2 == None or y2 == None):
             return []
@@ -180,6 +181,7 @@ class gameBoard():
         else:
             del self.white_pieces[piece.piece_id]
 
+    #This method is used to derive a human player's requested destination
     def derive_coordinates(self, x1, y1, direction):
         if direction == 'u':
             return x1, y1 - 2
@@ -192,25 +194,6 @@ class gameBoard():
         if direction == 'p':
             return None, None
 
-    def move_piece_computer(self, piece_coordinates, dest):
-        x1, y1 = piece_coordinates
-        x1 = int(x1)
-        y1 = int(y1)
-        if dest == "--":
-            self.update_game_piece_position(x1, y1, None, None)
-            self.turn = self.turn + 1
-            return
-
-        x2 = int(dest[0])
-        y2 = int(dest[1])
-
-        pieces_to_remove_after_move = self.list_of_jumped_pieces(x1, y1, x2, y2)
-        self.update_game_piece_position(x1, y1, x2, y2)
-
-        for piece in pieces_to_remove_after_move:
-            self.remove_piece_from_board(piece[0], piece[1])
-
-        self.turn = self.turn + 1
 
     def move_piece_human(self, piece_coordinates, direction):
         row, col = piece_coordinates
@@ -330,20 +313,6 @@ class gameBoard():
                     yield (piece, [landing_x, landing_y], self.turn + 1)
 
 
-    def evaluate_board_desiarbility(self):
-        if self.gameWon == 1 and self.turn % 2 == 0:
-            return float('inf')
-        if self.gameWon == 1 and self.turn % 2 == 1:
-            return float('-inf')
-
-        desirability = 0
-
-        for key, value in self.black_pieces.items():
-            desirability += value.cost
-        for key, value in self.white_pieces.items():
-            desirability += value.cost
-
-        return desirability
 
     #Checks the amount of moves avaliable for each player and checks if either have no moves
     def player_has_no_moves(self, turn_color):
@@ -596,7 +565,12 @@ class gameBoard():
 
         return False
 
-    # This will be our utility function that we will use to value certain moves over others
+
+    """
+    All the code below this line is used for board evaluation and the different types of evals are inherent by its given name.
+
+    """
+    # This will be our Terminal check for Minimax
 
     def game_over(self):
         black_has_moves=0

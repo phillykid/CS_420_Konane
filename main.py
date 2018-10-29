@@ -8,6 +8,47 @@ from tkinter import ttk
 from gui import *
 
 
+
+def play():
+    start_time = time.time()
+    counter=0;
+
+    while(b.gameWon == gameBoard.STILLPLAYING):
+        counter+=1
+        if b.turn%2==0:
+            cp.getMove(b)
+            update_gui(b.toString(),counter)
+        else:
+            cp2.getMove(b)
+            update_gui(b.toString(),counter)
+        if counter==6:
+            counter=0
+    print("--- %s seconds ---" % (time.time() - start_time))
+    print("--- seconds per turn ---" ,(time.time() - start_time)/b.turn)
+
+
+def update_gui(board_string,counter):
+    if counter%6==0:
+        board6.set(board_string)
+
+    elif counter%5==0:
+        board5.set(board_string)
+
+    elif counter%4==0:
+        board4.set(board_string)
+
+    elif counter%3==0:
+        board3.set(board_string)
+
+    elif counter%2==0:
+        board2.set(board_string)
+
+    elif counter%1==0:
+        board1.set(board_string)
+
+    b.print_board()
+    root.update()
+
 root = tk.Tk()
 T = tk.Text(root, height=5, width=30)
 T.pack()
@@ -20,26 +61,22 @@ style.configure("BR.TLabel", foreground="#A76571", background="#D8DCFF", justify
 style.configure("RB.TLabel", foreground="#D8DCFF", background="#A76571", justify="center")
 
 
-board = tk.StringVar()
-board.set("NO BOARD")
+
 board1 = tk.StringVar()
 board1.set("NO BOARD")
 board2 = tk.StringVar()
 board2.set("NO BOARD")
 board3 = tk.StringVar()
 board3.set("NO BOARD")
-
 board4 = tk.StringVar()
 board4.set("NO BOARD")
-
 board5 = tk.StringVar()
 board5.set("NO BOARD")
-
 board6 = tk.StringVar()
 board6.set("NO BOARD")
 
-boardLabel = tkinter.ttk.Label(root, textvariable=board, style="BR.TLabel")
-boardLabel.pack()
+
+
 
 boardLabel1 = tkinter.ttk.Label(root, textvariable=board1, style="RB.TLabel")
 boardLabel1.pack()
@@ -56,8 +93,11 @@ boardLabel4.pack()
 boardLabel5 = tkinter.ttk.Label(root, textvariable=board5, style="RB.TLabel")
 boardLabel5.pack()
 
+boardLabel6 = tkinter.ttk.Label(root, textvariable=board6, style="BR.TLabel")
+boardLabel6.pack()
 
-b = gameBoard(8, 8, 1)
+
+b = gameBoard(8, 8)
 
 print("INITIAL BOARD SETUP:")
 print(b)
@@ -82,21 +122,11 @@ print(b)
 #hp=HumanPlayer("W","B")
 cp=ComputerSimplePlayer("B","W",2)
 cp2=ComputerSimplePlayer("W","B",2)
+play()
 
-#print(b.evaluate_board_desiarbility())
-#print(b.print_w())
-start_time = time.time()
-while(b.gameWon == gameBoard.STILLPLAYING):
-    if b.turn%2==0:
-        cp.getMove(b)
-        b.print_board()
-        board.set(b.toString())
-        root.update()
-    else:
-        cp2.getMove(b)
-        b.print_board()
-        board1.set(b.toString())
-        root.update()
-#get_stats()
-print("--- %s seconds ---" % (time.time() - start_time))
-print("--- seconds per turn ---" ,(time.time() - start_time)/b.turn)
+
+
+
+
+
+
