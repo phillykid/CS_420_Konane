@@ -200,8 +200,7 @@ class gameBoard():
             self.update_game_piece_position(x1, y1, None, None)
             self.turn = self.turn + 1
             return
-        print("dest: ")
-        print(dest)
+
         x2 = int(dest[0])
         y2 = int(dest[1])
 
@@ -313,16 +312,9 @@ class gameBoard():
             destination_x = move[0] + piece.x
             destination_y = move[1] + piece.y
 
-            # print(destination_y,"2222")
-            # print(destination_x,"33333")
-            # print(self.width > destination_x > -1)
-            # print(self.height > destination_y > -1)
-            # print(not(self.width > destination_x > -1 and self.height > destination_y > -1))
-
             if not (self.width > destination_x > -1 and self.height > destination_y > -1):
                 continue
-            # print(destination_y,"sss")
-            # print(destination_x,"ssss")
+
             if self.total_pieces[destination_x][destination_y] == "-":
                 continue
             else:
@@ -336,6 +328,7 @@ class gameBoard():
                     continue
                 if self.total_pieces[landing_x][landing_y] == "-":
                     yield (piece, [landing_x, landing_y], self.turn + 1)
+
 
     def evaluate_board_desiarbility(self):
         if self.gameWon == 1 and self.turn % 2 == 0:
@@ -352,13 +345,10 @@ class gameBoard():
 
         return desirability
 
+    #Checks the amount of moves avaliable for each player and checks if either have no moves
     def player_has_no_moves(self, turn_color):
-        print("yo this", turn_color)
-        print("ALBERTTTTTTTTTTTTTTTTTTTTTTTTTT")
-        print("BLACK MOVES LEFT:")
         for piece, move in self.expand_black_moves():
             print(piece.x, piece.y, move[0], move[1])
-        print("White MOVES LEFT:")
         for piece, move in self.expand_white_moves():
             print(piece.x, piece.y, move[0], move[1])
         if turn_color == gameBoard.BLACK_ICON:
@@ -612,7 +602,6 @@ class gameBoard():
         black_has_moves=0
         white_has_moves=0
 
-
         for piece, move in self.expand_black_moves():
             black_has_moves=1
             break
@@ -623,10 +612,8 @@ class gameBoard():
 
         if black_has_moves==0 and self.turn%2==0:
             return -100000000000
-            #return float("-inf")
         if white_has_moves==0 and self.turn%2==1:
             return 100000000000
-            #return float("inf")
 
         return 0
 
