@@ -582,3 +582,40 @@ class gameBoard():
             s = s + "\n"
         s = s + "Last Move: " + self.last_move + "\n"
         return s
+
+    def terminal_state(self, black_or_white):
+        # Method will scan the board and see if we are in a terminal state
+        # The idea is to check all the pieces for black and all the pieces for white
+        # Return the color of the piece that can't move along with True if in terminal state
+        list_of_black_moves = []
+        list_of_white_moves = []
+
+        # Check if black is in a terminal state
+        if black_or_white == self.BLACK_ICON:
+            for b, x in self.expand_black_moves():
+                list_of_black_moves.append(x[1])
+            if len(list_of_black_moves) == 0:
+                return True
+        # Check if white is in a terminal state
+        elif black_or_white == self.WHITE_ICON:
+            for b, x in self.expand_white_moves():
+                list_of_white_moves.append(x[1])
+            if len(list_of_white_moves) == 0:
+                return True
+
+        return False
+
+    # This will be our utility function that we will use to value certain moves over others
+    def utility(self):
+        if self.gameWon == 1 and self.turn % 2 == 0:
+            return float('inf')
+        if self.gameWon == 1 and self.turn % 2 == 1:
+            return float('-inf')
+
+        desirability = 0
+
+        for key, value in self.black_pieces.items():
+            desirability += value.cost
+        for key, value in self.white_pieces.items():
+            desirability += value.cost
+        return desirability

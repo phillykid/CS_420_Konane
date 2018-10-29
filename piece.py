@@ -43,4 +43,7 @@ class gamePiece():
     def get_id(self):
         return self.piece_id
 
+    def __str__(self):
+        return "Piece Color: " + str(self.color) + " | " + "Coordinates: (" + str(self.x) + ", " + str(self.y) + ")"
+
 

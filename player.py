@@ -1,3 +1,4 @@
+from alpha_beta_pruning import alpha_beta_pruning
 from minimax import *
 
 class HumanPlayer():
@@ -22,7 +23,8 @@ class ComputerSimplePlayer():
         self.depth_limit=depth_limit
 
     def getMove(self,board):
-        bboard,score,move= minimax(board,0,self.depth_limit)
+        #bboard,score,move= minimax(board,0,self.depth_limit)
+        move = alpha_beta_pruning(board, 0, self.depth_limit)
         print("Move:",move)
         if move==None:
             print(self.color,"GAME LOSTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")

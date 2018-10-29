@@ -1,5 +1,5 @@
 import tkinter
-
+import time
 from board import *
 from minimax import *
 from player import *
@@ -58,15 +58,32 @@ boardLabel5.pack()
 
 
 b = gameBoard(8, 8, 1)
+
+print("INITIAL BOARD SETUP:")
+print(b)
+
+# First we have to do preliminary moves
+print()
+print("BLACK REMOVES A PIECE: ")
+black_piece, black_choice, turn = b.first_two_moves_picker(0)
+b.computer_move(str(black_piece.x)+str(black_piece.y), black_choice)
+print(b)
+
+print()
+print("WHITE REMOVES A PIECE: ")
+white_piece, white_choice, turn = b.first_two_moves_picker(0)
+b.computer_move(str(white_piece.x)+str(white_piece.y), white_choice)
+print(b)
+# End of preliminary moves
+
 #hp=HumanPlayer("W","B")
 cp=ComputerSimplePlayer("B","W",4)
 cp2=ComputerSimplePlayer("W","B",4)
 
-print("INITIAL BOARD:")
-print(b)
 #print(b.evaluate_board_desiarbility())
 #print(b.print_w())
-while(b.gameWon==gameBoard.STILLPLAYING):
+start_time = time.time()
+while(b.gameWon == gameBoard.STILLPLAYING):
     cp.getMove(b)
     b.print_board()
     board.set(b.toString())
@@ -92,3 +109,4 @@ while(b.gameWon==gameBoard.STILLPLAYING):
     b.print_board()
     board5.set(b.toString())
     root.update()
+print("--- %s seconds ---" % (time.time() - start_time))

@@ -56,5 +56,5 @@ def minimax(board,depth,depth_limit):
                 best_score=minimax_returned_score
         #print("Depth]]]]]]]]]]]]]]]]", current_depth)
 
-    return best_board,best_score,best_move
+    return best_board, best_score, best_move
 
