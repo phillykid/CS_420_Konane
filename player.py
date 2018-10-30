@@ -18,9 +18,18 @@ class HumanPlayer():
         
     def getMove(self,board):
         check=0;
+        if board.terminal_state():
+            print("Game Over")
+            board.player_has_no_moves(self.color)
+            print(board.gameWon)
         while(check==0):
-            move = input("Coordinate of Piece to be moved and direction(u d l r) (EX: 0 0 u = moves to 0 1)").split()
-            check = board.move_piece_human(move[0] + move[1], move[2])
+            move = input()
+            print(move)
+            if board.turn == 0 or board.turn == 1:
+                check = board.human_move_start(move)
+                print(check)
+            else:
+                check = board.human_move(move)
     
 
 
@@ -36,7 +45,7 @@ class ComputerSimplePlayer():
         move = alpha_beta_pruning(board, 0, self.depth_limit)
         print("Move:",move)
         if move==None:
-            print(self.color,"GAME LOSTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
+            #print(self.color,"GAME LOSTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
             board.player_has_no_moves(self.color)
             print(board.gameWon)
             return

@@ -60,8 +60,6 @@ class GameBoard(tk.Frame):
 # image comes from the silk icon set which is under a Creative Commons
 # license. For more information see http://www.famfamfam.com/lab/icons/silk/
 
-
-
 if __name__ == "__main__":
     root = tk.Tk()
     board = GameBoard(root)
@@ -71,6 +69,6 @@ if __name__ == "__main__":
     player1 = p1.subsample(5, 5)
     player2 = p2.subsample(3.5, 3.5)
     board.addpiece("player1", player1, 0,0)
-    board.addpiece("player2", player2, 0,1)
+    board.addpiece("player2", player2, 0, 1)
 
     root.mainloop()

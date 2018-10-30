@@ -1,22 +1,26 @@
-# Game Board requires height and width dimensions.
 from piece import *
 import random
-from sys import maxsize
+from copy import deepcopy
 
 """
+Game Board requires height and width dimensions.
 GameBoard has been to designed to work with 6x6 or 8x8 boards.
 Other formats are not guaranteed nor expected to work.
 """
 
 
-class gameBoard():
+class gameBoard:
     WHITE = -1
     BLACK = 1
     STILLPLAYING = 0
     BLACKWON = 1
     WHITEWON = -1
-    BLACK_ICON = "B"  # black circle
+    BLACK_ICON = "B"
     WHITE_ICON = "W"
+
+    """
+    Method adds a piece to the board based on color, cost, and coordinates
+    """
 
     def add_piece(self, color, cost, x, y):
         current_piece = gamePiece(color, cost, x, y)
@@ -29,8 +33,12 @@ class gameBoard():
             self.white_pieces[current_piece.piece_id] = current_piece
         return color
 
+    """
+    Method updates the position of a game piece on the board
+    """
+
     def update_game_piece_position(self, x1, y1, x2, y2):
-        if not (x2 == None and y2 == None):
+        if not (x2 is None and y2 is None):
             self.last_move = "[" + str(x1) + "," + str(y1) + "]" + " to " + "[" + str(x2) + "," + str(
                 y2) + "]" + "piece color: " + self.total_pieces[x1][y1].color
             self.total_pieces[x2][y2] = self.total_pieces[x1][y1]
@@ -46,11 +54,11 @@ class gameBoard():
                 del self.white_pieces[piece_to_remove.piece_id]
             self.total_pieces[x1][y1] = "-"
 
-    def __init__(self, height, width, computer_is_first):
-        """
-        Constructs a board with given dimensions and sets the inital player turn ordering.
-        """
+    """
+    Constructs a board with given dimensions and sets the initial player turn ordering
+    """
 
+    def __init__(self, height, width, computer_is_first):
         self.width = width
         self.height = height
         self.turn = 0
@@ -64,6 +72,10 @@ class gameBoard():
         self.gameWon = self.STILLPLAYING
         self.maxDepth = 10
 
+    """
+    Method for setting up the game board with black and white pieces
+    """
+
     def draw_board(self, width, height):
         for i in range(width):
             for j in range(height):
@@ -72,24 +84,12 @@ class gameBoard():
                 else:
                     self.add_piece(gameBoard.WHITE_ICON, -1, i, j)
 
-    def print_board(self):
-        print("What Happened in turn: " + str(self.turn - 1))
-        if self.turn % 2 == 0:
-            print("Black Turn Next")
-        else:
-            print("White Turn Next")
-        s = ""
-        for h in range(self.height):
-            for w in range(self.width):
-                piece = self.total_pieces[h][w]
-                if not piece == "-":
-                    s = s + str(self.total_pieces[h][w].color) + "  "
-                else:
-                    s = s + "-- "
-            s = s + " \n"
-        print(s)
+    """
+    Method for returning the game board object as a string
+    """
 
-    def toString(self):
+    def __str__(self):
+        print("TURN: " + str(self.turn))
         s = ""
         for h in range(self.height):
             for w in range(self.width):
@@ -99,11 +99,15 @@ class gameBoard():
                 else:
                     s = s + "-- "
             s = s + "\n"
-        s = s + "Turn:" + str(self.turn) + "\n" + "Last Move: " + self.last_move
+        s = s + "Last Move: " + self.last_move + "\n"
         return s
 
+    """
+    Method for checking if a move is legal
+    """
+
     def is_legal_move(self, x1, y1, x2, y2):
-        if (self.turn < 2):
+        if self.turn < 2:
             legal_moves = self.first_two_moves_picker(1)
             if [x1, y1] in legal_moves:
                 return 1
@@ -142,6 +146,10 @@ class gameBoard():
                 return 1
 
         return 0
+
+    """
+    Given two sets of coordinates, this method returns the pieces jumped in that move
+    """
 
     def list_of_jumped_pieces(self, x1, y1, x2, y2):
         if (x2 == None or y2 == None):
@@ -220,18 +228,18 @@ class gameBoard():
         x2 = None
         y2 = None
         direction_returned = self.derive_coordinates(x1, y1, direction)
-        if not (direction_returned == None):
+        if not (direction_returned is None):
             x2 = direction_returned[0]
             y2 = direction_returned[1]
-            if (self.is_legal_move(x1, y1, x2, y2) == 0):
+            if self.is_legal_move(x1, y1, x2, y2) == 0:
                 print("Illegal move please try again (Middle)")
                 return 0
         else:
-            if (self.is_legal_move(x1, y1, None, None) == 0):
+            if self.is_legal_move(x1, y1, None, None) == 0:
                 print("Illegal move please try again (Opening)")
                 return 0
 
-        if (direction == 'p'):
+        if direction == 'p':
             self.update_game_piece_position(x1, y1, None, None)
         else:
             jumped = self.list_of_jumped_pieces(x1, y1, x2, y2)
@@ -240,6 +248,100 @@ class gameBoard():
                 self.remove_piece_from_board(piece[0], piece[1])
         self.turn = self.turn + 1
         return 1
+
+    def human_move(self, human_input):
+        # Must contain to and smallest input is: 1,1 to 1,2 (one move) = 10 characters
+        if not(" to " in human_input) or len(human_input) < 10:
+            print("Wrong format, please try again")
+            return 0
+        # Check after splitting, should have 3 characters in each
+        move_seq = human_input.split(" to ")
+        length = len(move_seq)
+        for i in range(length):
+            if not (len(move_seq[i]) == 3):
+                print("Wrong Format, please try again")
+                return 0
+        # At this point we can begin checking if moves are legal
+        counter = 1
+        piece_x = int(move_seq[0][:-2]) - 1
+        piece_y = int(move_seq[0][2:]) - 1
+        board_o = deepcopy(self)
+        while counter < length:
+            move_x = int(move_seq[counter][:-2]) - 1
+            move_y = int(move_seq[counter][2:]) - 1
+            #print(piece_x, piece_y)
+            #print(move_x, move_y)
+            # if the first one is legal then proceed, but we need a way to undo the damage
+            if board_o.is_legal_move(piece_x, piece_y, move_x, move_y) == 0:
+                print("Illegal move, please try again")
+                return 0
+            board_o.execute_move(piece_x, piece_y, move_x, move_y)
+            board_o.increment_turn()
+            piece_x = move_x
+            piece_y = move_y
+            counter += 1
+        # At this point we know the moves are all legal so we execute them
+        index = 1
+        x1 = int(move_seq[0][:-2]) - 1
+        y1 = int(move_seq[0][2:]) - 1
+        last_move_string = "[" + str(x1) + "," + str(y1) + "]"
+        while index < length:
+            x2 = int(move_seq[index][:-2]) - 1
+            y2 = int(move_seq[index][2:]) - 1
+            last_move_string = last_move_string + " to " + "[" + str(x2) + "," + str(y2) + "]"
+            self.execute_move(x1, y1, x2, y2)
+            index += 1
+            x1 = x2
+            y1 = y2
+        self.last_move = last_move_string + " piece color: " + self.total_pieces[x1][y1].color
+        self.turn = self.turn + 1
+        return 1
+
+    def human_move_start(self, human_input):
+        # This means we are black and get to remove a black piece
+        if self.turn == 0:
+            if not(len(human_input) == 3):
+                print("Wrong format, please try again")
+                return 0
+            # Now check that it is one of the four possible moves to removed
+            valid_moves = ["8,8", "1,1", "5,5", "4,4"]
+            check = False
+            for i in range(4):
+                if human_input == valid_moves[i]:
+                    check = True
+                    break
+            if not check:
+                print("Illegal move, please try again")
+                return 0
+            else:
+                x1 = int(human_input[:-2]) - 1
+                y1 = int(human_input[2:]) - 1
+                self.update_game_piece_position(x1, y1, None, None)
+                self.turn += 1
+        # This means we are white and get to remove an adjacent piece
+        if self.turn == 1:
+            black_x = int(self.last_move[9:-17])
+            black_y = int(self.last_move[11:-15])
+            x1 = int(human_input[:-2]) - 1
+            y1 = int(human_input[2:]) - 1
+            valid_removes = [(1, 0), (-1, 0), (0, 1), (0, -1)]
+            check2 = False
+            for m in range(4):
+                x, y = valid_removes[m]
+                if x1 == black_x + x and y1 == black_y + y:
+                    check2 = True
+                    break
+
+            if not check2:
+                print("Illegal move, please try again")
+                return 0
+            else:
+                self.update_game_piece_position(x1, y1, None, None)
+                self.turn += 1
+        return 1
+
+
+
 
     def expand_white_moves(self):
 
@@ -353,8 +455,6 @@ class gameBoard():
         return desirability
 
     def player_has_no_moves(self, turn_color):
-        print("yo this", turn_color)
-        print("ALBERTTTTTTTTTTTTTTTTTTTTTTTTTT")
         print("BLACK MOVES LEFT:")
         for piece, move in self.expand_black_moves():
             print(piece.x, piece.y, move[0], move[1])
@@ -393,9 +493,6 @@ class gameBoard():
             x1 = x2
             y1 = y2
         self.last_move = last_move_string + " piece color: " + self.total_pieces[x1][y1].color
-        # color = self.total_pieces[x1][y1].color
-        # print("CURRENT TURN: " + str(self.turn))
-        # print("CURRENT PIECE COLOR: " + str(color))
         self.turn = self.turn + 1
 
     def execute_move(self, x1, y1, x2, y2):
@@ -405,7 +502,7 @@ class gameBoard():
             self.remove_piece_from_board(piece[0], piece[1])
 
     """
-    Method to replace iter_for_all_moves_method
+    Method returns all possible moves for a given piece
     """
 
     def return_all_moves(self, piece):
@@ -418,7 +515,7 @@ class gameBoard():
             yield (piece, paths, self.turn + 1)
 
     """
-    Method will take the list from the generate legal moves method, and generate paths for each of the possible moves
+    Method will take the list from the generate legal moves method and generate paths for each of those possible moves
     """
 
     def legal_move_path_list(self, moves, original):
@@ -431,22 +528,16 @@ class gameBoard():
             # Get parent move coordinate
             parent = str((move[2])[12:])
             # Now we have to determine if parent is equal to original coordinate
+            # If so then that means we can get to that move with just one move
             if parent == original:
-                # print("The MoveTo being added: " + str(moveTo))
-                # Means we can get to that move with just one move
                 temp_list = []
                 temp_list.append(moveTo)
                 list_of_legal_moves.append(temp_list)
             else:
-                # print("The moveTo and its parent: " + str(moveTo) + ", " + str(parent))
-                # print("Sending with index: " + str(index))
-                # print("Backtracking process begins: ")
                 backtracking_list = self.generate_path(moves, move[2], original, index)
                 initial = []
                 initial.append(moveTo)
                 backtracking_list.extend(initial)
-                # print("Backtracking process complete: ")
-                # print(backtracking_list)
                 list_of_legal_moves.append(backtracking_list)
             index += 1
         return list_of_legal_moves
@@ -567,23 +658,6 @@ class gameBoard():
             return False
         return True
 
-    """
-    Method for printing the board object
-    """
-
-    def __str__(self):
-        s = ""
-        for h in range(self.height):
-            for w in range(self.width):
-                piece = self.total_pieces[h][w]
-                if not piece == "-":
-                    s = s + str(self.total_pieces[h][w].color) + "  "
-                else:
-                    s = s + "-- "
-            s = s + "\n"
-        s = s + "Last Move: " + self.last_move + "\n"
-        return s
-
     def terminal_state(self, black_or_white):
         # Method will scan the board and see if we are in a terminal state
         # The idea is to check all the pieces for black and all the pieces for white
@@ -609,28 +683,27 @@ class gameBoard():
     # This will be our utility function that we will use to value certain moves over others
 
     def game_over(self):
-        black_has_moves=0
-        white_has_moves=0
-
+        black_has_moves = 0
+        white_has_moves = 0
 
         for piece, move in self.expand_black_moves():
-            black_has_moves=1
+            black_has_moves = 1
             break
 
         for piece, move in self.expand_white_moves():
-            white_has_moves=1
+            white_has_moves = 1
             break
 
-        if black_has_moves==0 and self.turn%2==0:
+        if black_has_moves == 0 and self.turn % 2 == 0:
             return -100000000000
-            #return float("-inf")
-        if white_has_moves==0 and self.turn%2==1:
+            # return float("-inf")
+        if white_has_moves == 0 and self.turn % 2 == 1:
             return 100000000000
-            #return float("inf")
+            # return float("inf")
 
         return 0
 
-    def utility(self,eval):
+    def utility(self, eval):
         if eval == 1:
             return self.utility_number_of_pieces()
         if eval == 2:
@@ -640,10 +713,8 @@ class gameBoard():
         if eval == 4:
             return self.utility_number_of_ally_vs_enemy_moves()
 
-
-
     def utility_number_of_pieces(self):
-        game_status=self.game_over()
+        game_status = self.game_over()
         if game_status != 0:
             return game_status
 
@@ -657,12 +728,12 @@ class gameBoard():
         return desirability
 
     def utility_number_of_ally_moves(self):
-        game_status=self.game_over()
+        game_status = self.game_over()
         if game_status != 0:
             return game_status
 
         desirability = 0
-        if self.turn%2==0:
+        if self.turn % 2 == 0:
             for piece, move in self.expand_black_moves():
                 desirability += 1
         else:
@@ -671,12 +742,12 @@ class gameBoard():
         return desirability
 
     def utility_number_of_enemy_moves(self):
-        game_status=self.game_over()
+        game_status = self.game_over()
         if game_status != 0:
             return game_status
 
         desirability = 0
-        if self.turn%2==0:
+        if self.turn % 2 == 0:
             desirability -= len(list(self.expand_white_moves()))
 
         else:
@@ -684,7 +755,7 @@ class gameBoard():
         return desirability
 
     def utility_number_of_ally_vs_enemy_moves(self):
-        game_status=self.game_over()
+        game_status = self.game_over()
         if game_status != 0:
             return game_status
 
@@ -695,3 +766,6 @@ class gameBoard():
         for piece, move in self.expand_white_moves():
             desirability -= 1
         return desirability
+
+    def increment_turn(self):
+        self.turn += 1

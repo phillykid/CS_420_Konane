@@ -59,43 +59,44 @@ boardLabel5.pack()
 
 b = gameBoard(8, 8, 1)
 
-print("INITIAL BOARD SETUP:")
-print(b)
+# print("INITIAL BOARD SETUP:")
+# print(b)
+#
+# # First we have to do preliminary moves
+# print()
+# print("BLACK REMOVES A PIECE: ")
+# black_piece, black_choice, turn = b.first_two_moves_picker(0)
+# b.computer_move(str(black_piece.x)+str(black_piece.y), black_choice)
+# print(b)
+#
+# print()
+# print("WHITE REMOVES A PIECE: ")
+# white_piece, white_choice, turn = b.first_two_moves_picker(0)
+# b.computer_move(str(white_piece.x)+str(white_piece.y), white_choice)
+# print(b)
+#
+# # End of preliminary moves
 
-# First we have to do preliminary moves
-print()
-print("BLACK REMOVES A PIECE: ")
-black_piece, black_choice, turn = b.first_two_moves_picker(0)
-b.computer_move(str(black_piece.x)+str(black_piece.y), black_choice)
-print(b)
-
-print()
-print("WHITE REMOVES A PIECE: ")
-white_piece, white_choice, turn = b.first_two_moves_picker(0)
-b.computer_move(str(white_piece.x)+str(white_piece.y), white_choice)
-print(b)
-
-# End of preliminary moves
 
 
+hp = HumanPlayer("W","B")
+cp = ComputerSimplePlayer("B","W",2)
+#cp2=ComputerSimplePlayer("W","B",2)
 
-#hp=HumanPlayer("W","B")
-cp=ComputerSimplePlayer("B","W",2)
-cp2=ComputerSimplePlayer("W","B",2)
-
-#print(b.evaluate_board_desiarbility())
-#print(b.print_w())
 start_time = time.time()
-while(b.gameWon == gameBoard.STILLPLAYING):
+while b.gameWon == gameBoard.STILLPLAYING:
     if b.turn%2==0:
         cp.getMove(b)
-        b.print_board()
-        board.set(b.toString())
+        print(b)
+        board.set(b.__str__())
         root.update()
     else:
-        cp2.getMove(b)
-        b.print_board()
-        board1.set(b.toString())
+        # Wait for human input
+        hp.getMove(b)
+        #cp2.getMove(b)
+        #print("are u retarded?")
+        print(b)
+        board1.set(b.__str__())
         root.update()
 #get_stats()
 print("--- %s seconds ---" % (time.time() - start_time))
