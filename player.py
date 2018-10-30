@@ -1,14 +1,18 @@
 from alpha_beta_pruning import alpha_beta_pruning
 from minimax import *
 
+
+#Returns the given stats of the Minimax function
 def get_stats():
     print("Branch Totals: ",Minimax_tracker.total_branches)
-    print("Eval Calls: ",Minimax_tracker.total_evauls)
-    print("Cutoff Totals",Minimax_tracker.total_cut_offs)
-    print("Avg Branching Factor: ",Minimax_tracker.total_branches/Minimax_tracker.total_parents)
-    print("Eval Calls: ",Minimax_tracker.total_evauls)
-    print("Cutoff Totals",Minimax_tracker.total_cut_offs)
+    print("Eval Calls: ",Minimax_tracker.total_evals)
+    print("Cutoff Totals: ",Minimax_tracker.total_cut_offs)
+    print("Avg Branching Factor: ",Minimax_tracker.total_branches/Minimax_tracker.total_non_leafs)
 
+"""
+The different player types and the main differences are human vs computer and the evaluation function which that
+computer play is going to use.
+"""
 
 class HumanPlayer():
     def __init__(self,color,opponent_color):
@@ -32,7 +36,7 @@ class HumanPlayer():
                 check = board.human_move(move)
     
 
-
+#Makes moves based on the ratio between number of ally pieces and enemy pieces
 class ComputerSimplePlayer():
     def __init__(self,color,opponent_color,depth_limit):
         name = "Computer_Simple_Player"
@@ -51,10 +55,10 @@ class ComputerSimplePlayer():
             return
         board.computer_move(move[0],move[1])
 
-
+#Decides moves based on the amount of moves that would be avaliable in the posistion
 class ComputerCastlePlayer():
     def __init__(self,color,opponent_color,depth_limit):
-        name = "Computer_Simple_Player"
+        name = "Computer_Castle_Player"
         self.color=color
         self.o_color=opponent_color
         self.depth_limit=depth_limit
@@ -72,9 +76,11 @@ class ComputerCastlePlayer():
         board.computer_move(move[0],move[1])
 
 
+
+#Decides moves based on the amount of moves that the opponent will have avaliable in the posistion
 class ComputerEliminatorPlayer():
     def __init__(self,color,opponent_color,depth_limit):
-        name = "Computer_Simple_Player"
+        name = "Computer_Eliminator_Player"
         self.color=color
         self.o_color=opponent_color
         self.depth_limit=depth_limit
@@ -90,10 +96,10 @@ class ComputerEliminatorPlayer():
             return
         board.computer_move(move[0],move[1])
 
-
+#Decides moves based on the ratio between the amount of moves that the you and your opponent will have avaliable in the posistion
 class ComputerAttritionPlayer():
     def __init__(self,color,opponent_color,depth_limit):
-        name = "Computer_Simple_Player"
+        name = "Computer_Attrition_Player"
         self.color=color
         self.o_color=opponent_color
         self.depth_limit=depth_limit
