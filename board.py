@@ -1,7 +1,7 @@
 # Game Board requires height and width dimensions.
 from piece import *
 import random
-from sys import maxsize
+from copy import deepcopy
 
 """
 GameBoard has been to designed to work with 6x6 or 8x8 boards.
@@ -17,6 +17,7 @@ class gameBoard():
     WHITEWON = -1
     BLACK_ICON = "B"  # black symb
     WHITE_ICON = "W"  # white symb
+
 
     #Adds a game piece to the board and the relevant players piece list
     def add_piece(self, color, value, x, y):
@@ -224,7 +225,6 @@ class gameBoard():
         return 1
 
     def expand_white_moves(self):
-
         for key, piece in self.white_pieces.items():
             for move in self.expand_moves_for_piece(piece):
                 yield piece, move
@@ -645,3 +645,97 @@ class gameBoard():
 
         return len(list(self.expand_black_moves())) - len(list(self.expand_white_moves()))
 
+    def human_move(self, human_input):
+        # Must contain to and smallest input is: 1,1 to 1,2 (one move) = 10 characters
+        if not(" to " in human_input) or len(human_input) < 10:
+            print("Wrong format, please try again")
+            return 0
+        # Check after splitting, should have 3 characters in each
+        move_seq = human_input.split(" to ")
+        length = len(move_seq)
+        for i in range(length):
+            if not (len(move_seq[i]) == 3):
+                print("Wrong Format, please try again")
+                return 0
+        # At this point we can begin checking if moves are legal
+        counter = 1
+        piece_x = int(move_seq[0][:-2]) - 1
+        piece_y = int(move_seq[0][2:]) - 1
+        board_o = deepcopy(self)
+        while counter < length:
+            move_x = int(move_seq[counter][:-2]) - 1
+            move_y = int(move_seq[counter][2:]) - 1
+            #print(piece_x, piece_y)
+            #print(move_x, move_y)
+            # if the first one is legal then proceed, but we need a way to undo the damage
+            if board_o.is_legal_move(piece_x, piece_y, move_x, move_y) == 0:
+                print("Illegal move, please try again")
+                return 0
+            board_o.execute_move(piece_x, piece_y, move_x, move_y)
+            board_o.increment_turn()
+            piece_x = move_x
+            piece_y = move_y
+            counter += 1
+        # At this point we know the moves are all legal so we execute them
+        index = 1
+        x1 = int(move_seq[0][:-2]) - 1
+        y1 = int(move_seq[0][2:]) - 1
+        last_move_string = "[" + str(x1) + "," + str(y1) + "]"
+        while index < length:
+            x2 = int(move_seq[index][:-2]) - 1
+            y2 = int(move_seq[index][2:]) - 1
+            last_move_string = last_move_string + " to " + "[" + str(x2) + "," + str(y2) + "]"
+            self.execute_move(x1, y1, x2, y2)
+            index += 1
+            x1 = x2
+            y1 = y2
+        self.last_move = last_move_string + " piece color: " + self.total_pieces[x1][y1].color
+        self.turn = self.turn + 1
+        return 1
+
+    def human_move_start(self, human_input):
+        if not (len(human_input) == 3):
+            print("Wrong format, please try again")
+            return 0
+
+        # This means we are black and get to remove a black piece
+        if self.turn == 0:
+            # Now check that it is one of the four possible moves to removed
+            valid_moves = ["8,8", "1,1", "5,5", "4,4"]
+            check = False
+            for i in range(4):
+                if human_input == valid_moves[i]:
+                    check = True
+                    break
+            if not check:
+                print("Illegal move, please try again")
+                return 0
+            else:
+                x1 = int(human_input[:-2]) - 1
+                y1 = int(human_input[2:]) - 1
+                self.update_game_piece_position(x1, y1, None, None)
+                self.turn += 1
+        # This means we are white and get to remove an adjacent piece
+        if self.turn == 1:
+            black_x = int(self.last_move[9:-17])
+            black_y = int(self.last_move[11:-15])
+            x1 = int(human_input[:-2]) - 1
+            y1 = int(human_input[2:]) - 1
+            valid_removes = [(1, 0), (-1, 0), (0, 1), (0, -1)]
+            check2 = False
+            for m in range(4):
+                x, y = valid_removes[m]
+                if x1 == black_x + x and y1 == black_y + y:
+                    check2 = True
+                    break
+
+            if not check2:
+                print("Illegal move, please try again")
+                return 0
+            else:
+                self.update_game_piece_position(x1, y1, None, None)
+                self.turn += 1
+        return 1
+
+    def increment_turn(self):
+        self.turn += 1

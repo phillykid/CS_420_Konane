@@ -132,11 +132,31 @@ boardLabel6.pack()
 # End of preliminary moves
 
 
-
-#hp=HumanPlayer("W","B")
+# cp=ComputerAttritionPlayer("B","W",4)
+# hp=HumanPlayer("W","B")
+# b = gameBoard(8, 8)
+#
 run_game_10()
-
-
+#
+#
+# start_time = time.time()
+# while b.gameWon == gameBoard.STILLPLAYING:
+#     if b.turn%2==0:
+#         cp.getMove(b)
+#         print(b)
+#         board1.set(b.toString())
+#         root.update()
+#     else:
+#         # Wait for human input
+#         hp.getMove(b)
+#         #cp2.getMove(b)
+#         #print("are u retarded?")
+#         print(b)
+#         board2.set(b.toString())
+#         root.update()
+# # #get_stats()
+# print("--- %s seconds ---" % (time.time() - start_time))
+# print("--- seconds per turn ---" ,(time.time() - start_time)/b.turn)
 
 
 

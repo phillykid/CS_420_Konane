@@ -1,5 +1,10 @@
 from copy import deepcopy
 
+# Statistics
+number_of_static_evaluations = 0
+total_branches = 0
+number_of_cut_offs = 0
+
 
 # For this method we need to compute the action a from the list of actions that has
 # the minimum utility value
@@ -8,14 +13,14 @@ def alpha_beta_pruning(board_state, depth, depth_limit):
     action = None
     # In case we are black
     if board_state.turn == 0:
+
         piece, move, turn = board_state.first_two_moves_picker(0)
-        action = str(piece.x)+str(piece.y), move
-        print("We are black!")
+        action = str(piece.x) + str(piece.y), move
         return action
     # In case we are white
     if board_state.turn == 1:
         piece, move, turn = board_state.first_two_moves_picker(0)
-        action = str(piece.x)+str(piece.y), move
+        action = str(piece.x) + str(piece.y), move
         return action
     # As soon as this starts we are going down to depth 1
     # Initially alpha and beta are -infinity and +infinity respectively
@@ -38,9 +43,9 @@ def max_value(board_state, depth, depth_limit, alpha, beta):
 
     # First check if black is in a terminal state
     resulting_state = deepcopy(board_state)
-    terminal_check = resulting_state.terminal_state(resulting_state.BLACK_ICON)
-    if terminal_check or depth > depth_limit:
-        return resulting_state.utility(2), primary_action
+    terminal_check = resulting_state.game_over()
+    if (terminal_check == -100000000000) or depth == depth_limit:
+        return resulting_state.utility(4), primary_action
     # Otherwise run through the algorithm
     v = float('-inf')
     old_v = v
@@ -68,10 +73,11 @@ def min_value(board_state, depth, depth_limit, alpha, beta):
     # Our primary action would only be None if we hit a leaf node
     primary_action = None
 
+    # First check if black is in a terminal state
     resulting_state = deepcopy(board_state)
-    terminal_check = resulting_state.terminal_state(resulting_state.WHITE_ICON)
-    if terminal_check or depth > depth_limit:
-        return resulting_state.utility(2), primary_action
+    terminal_check = resulting_state.game_over()
+    if (terminal_check == 100000000000) or depth == depth_limit:
+        return resulting_state.utility(4), primary_action
     # Otherwise run the algorithm
     v = float('inf')
     old_v = v
