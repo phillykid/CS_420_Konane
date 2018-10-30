@@ -5,9 +5,9 @@ from minimax import *
 #Returns the given stats of the Minimax function
 def get_stats():
     print("Branch Totals: ",Minimax_tracker.total_branches)
-    print("Eval Calls: ",Minimax_tracker.total_evauls)
-    print("Cutoff Totals",Minimax_tracker.total_cut_offs)
-    print("Avg Branching Factor: ",Minimax_tracker.total_branches/Minimax_tracker.total_parents)
+    print("Eval Calls: ",Minimax_tracker.total_evals)
+    print("Cutoff Totals: ",Minimax_tracker.total_cut_offs)
+    print("Avg Branching Factor: ",Minimax_tracker.total_branches/Minimax_tracker.total_non_leafs)
 
 """
 The different player types and the main differences are human vs computer and the evaluation function which that

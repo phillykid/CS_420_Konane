@@ -609,12 +609,8 @@ class gameBoard():
             return game_status
 
         desirability = 0
-
-        for key, value in self.black_pieces.items():
-            desirability += value.cost
-
-        for key, value in self.white_pieces.items():
-            desirability += value.cost
+        desirability -= len(self.black_pieces)
+        desirability -= len(self.white_pieces)
         return desirability
 
     def utility_number_of_ally_moves(self):
@@ -624,11 +620,9 @@ class gameBoard():
 
         desirability = 0
         if self.turn%2==0:
-            for piece, move in self.expand_black_moves():
-                desirability += 1
+            desirability += len(list(self.expand_black_moves()))
         else:
-            for piece, move in self.expand_white_moves():
-                desirability += -1
+            desirability -= len(list(self.expand_white_moves()))
         return desirability
 
     def utility_number_of_enemy_moves(self):
@@ -646,13 +640,8 @@ class gameBoard():
 
     def utility_number_of_ally_vs_enemy_moves(self):
         game_status=self.game_over()
-        if game_status != 0:
+        if game_status != 0: #0 means game still live
             return game_status
 
-        desirability = 0
+        return len(list(self.expand_black_moves())) - len(list(self.expand_white_moves()))
 
-        for piece, move in self.expand_black_moves():
-            desirability += 1
-        for piece, move in self.expand_white_moves():
-            desirability -= 1
-        return desirability

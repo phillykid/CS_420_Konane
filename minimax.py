@@ -2,8 +2,8 @@ from copy import deepcopy
 class Minimax_tracker():
     total_branches=0 #The total amount of moves in the game possible
     total_cut_offs=0 #The number of times the depth limit is reached
-    total_evauls=0   #The number of times the board is evaluated
-    total_parents=0  #The number of posistions we branch off from used to calculate avg branching factor
+    total_evals=0   #The number of times the board is evaluated
+    total_non_leafs=0  #The number of posistions we branch off from used to calculate avg branching factor
 
     # Eval=utility function used: 1=pieces on board eval 2=number of ally moves eval 3= number of enemy moves eval 4=ally-enemy moves evaul
     def minimax(board,depth,depth_limit,eval):
@@ -24,6 +24,7 @@ class Minimax_tracker():
             best_board=deepcopy(board)
             best_board.computer_move(str(piece.x)+str(piece.y), move)
             best_move=str(piece.x)+str(piece.y), move
+            return best_board, best_score, best_move
 
         if board.turn==1:
             Minimax_tracker.total_branches+=4
@@ -32,6 +33,7 @@ class Minimax_tracker():
             best_board=deepcopy(board)
             best_board.computer_move(str(piece.x)+str(piece.y), move)
             best_move=str(piece.x)+str(piece.y), move
+            return best_board, best_score, best_move
 
         # After first 2 pieces have been removed
 
@@ -72,12 +74,12 @@ class Minimax_tracker():
                     best_score=minimax_returned_score
 
 
-        Minimax_tracker.total_parents+=1
+        Minimax_tracker.total_non_leafs+=1
         return best_board, best_score, best_move
 
     #Checks the eval score of the given board
     @classmethod
     def board_check(self,board,eval):
-        Minimax_tracker.total_evauls+=1
+        Minimax_tracker.total_evals+=1
         return board,board.utility(eval), None
 

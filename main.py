@@ -6,10 +6,11 @@ from player import *
 import tkinter as tk
 from tkinter import ttk
 from gui import *
+time_list=[]
 
 
 
-def play():
+def play(b,cp,cp2):
     start_time = time.time()
     counter=0;
 
@@ -17,17 +18,30 @@ def play():
         counter+=1
         if b.turn%2==0:
             cp.getMove(b)
-            update_gui(b.toString(),counter)
+            update_gui(b.toString(),counter,b)
         else:
             cp2.getMove(b)
-            update_gui(b.toString(),counter)
+            update_gui(b.toString(),counter,b)
         if counter==6:
             counter=0
     print("--- %s seconds ---" % (time.time() - start_time))
     print("--- seconds per turn ---" ,(time.time() - start_time)/b.turn)
+   # get_stats()
+
+def run_game_10():
+    for x in range(10):
+        b = gameBoard(8, 8)
+        cp=ComputerAttritionPlayer("B","W",4)
+        cp2=ComputerAttritionPlayer("W","B",4)
+        start_time = time.time()
+        play(b,cp,cp2)
+        time_list.append(time.time() - start_time)
+    print(sum(time_list)/len(time_list))
 
 
-def update_gui(board_string,counter):
+
+
+def update_gui(board_string,counter,b):
     if counter%6==0:
         board6.set(board_string)
 
@@ -97,32 +111,30 @@ boardLabel6 = tkinter.ttk.Label(root, textvariable=board6, style="BR.TLabel")
 boardLabel6.pack()
 
 
-b = gameBoard(8, 8)
-
-print("INITIAL BOARD SETUP:")
-print(b)
-
-# First we have to do preliminary moves
-print()
-print("BLACK REMOVES A PIECE: ")
-black_piece, black_choice, turn = b.first_two_moves_picker(0)
-b.computer_move(str(black_piece.x)+str(black_piece.y), black_choice)
-print(b)
-
-print()
-print("WHITE REMOVES A PIECE: ")
-white_piece, white_choice, turn = b.first_two_moves_picker(0)
-b.computer_move(str(white_piece.x)+str(white_piece.y), white_choice)
-print(b)
+# b = gameBoard(8, 8)
+#
+# print("INITIAL BOARD SETUP:")
+# print(b)
+#
+# # First we have to do preliminary moves
+# print()
+# print("BLACK REMOVES A PIECE: ")
+# black_piece, black_choice, turn = b.first_two_moves_picker(0)
+# b.computer_move(str(black_piece.x)+str(black_piece.y), black_choice)
+# print(b)
+#
+# print()
+# print("WHITE REMOVES A PIECE: ")
+# white_piece, white_choice, turn = b.first_two_moves_picker(0)
+# b.computer_move(str(white_piece.x)+str(white_piece.y), white_choice)
+# print(b)
 
 # End of preliminary moves
 
 
 
 #hp=HumanPlayer("W","B")
-cp=ComputerSimplePlayer("B","W",2)
-cp2=ComputerSimplePlayer("W","B",2)
-play()
+run_game_10()
 
 
 
