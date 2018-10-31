@@ -371,7 +371,7 @@ class gameBoard():
         row = piece.x
         col = piece.y
         original = "[" + str(row) + ", " + str(col) + "]"
-        list_of_moves = self.generate_list_legal_moves(row, col, piece.color, None, 0)
+        list_of_moves = self.generate_list_legal_moves(row, col, piece.color, None, 0, None)
         list_of_move_paths = self.legal_move_path_list(list_of_moves, original)
         for paths in list_of_move_paths:
             yield (piece, paths, self.turn + 1)
@@ -391,7 +391,6 @@ class gameBoard():
             parent = str((move[2])[12:])
             # Now we have to determine if parent is equal to original coordinate
             if parent == original:
-                # print("The MoveTo being added: " + str(moveTo))
                 # Means we can get to that move with just one move
                 temp_list = []
                 temp_list.append(moveTo)
@@ -463,9 +462,10 @@ class gameBoard():
     Method for generating a list of all legal moves for a piece at a given row and column, r,c
     """
 
-    def generate_list_legal_moves(self, r, c, color, removed, count):
+    def generate_list_legal_moves(self, r, c, color, removed, count, direction):
         # Scan board for possible moves from the current x, y on the board
         moves = [(-1, 0), (1, 0), (0, 1), (0, -1)]
+        directions = ["N", "S", "E", "W"]
         legal_moves = []
         removed_list = []
         if not removed is None:
@@ -473,46 +473,51 @@ class gameBoard():
         # print("I am generating legal moves for: " + str([r, c]))
         # print("I am working on this color: " + color)
         # print("The current removed_list is: " + str(removed_list))
+        counter = 0
         for m in moves:
-            move_row = r + m[0]
-            move_col = c + m[1]
-            jumped = False
-            # Check if the current move is valid to continue
-            if self.is_within_bounds(move_row, move_col):
-                # print("Is within bounds: " + str([move_row, move_col]))
-                # If the space is not empty continue
-                # Now that we know it is in the board, loop to check if it has been jumped or not
-                current_piece = [move_row, move_col]
-                # print(current_piece)
-                for jumped_pieces in removed_list:
-                    if current_piece == jumped_pieces:
-                        jumped = True
-                        # print("Piece has already been removed!")
-                if not (self.total_pieces[move_row][move_col] == '-') and not jumped:
-                    # print("Move is not empty")
-                    # If the new space is a piece with a different color continue
-                    if not (self.total_pieces[move_row][move_col].color == color):
-                        # print("Color of it is different as well")
-                        # Check if the space beyond is empty
-                        beyond_r = move_row + m[0]
-                        beyond_c = move_col + m[1]
-                        # Check if space past piece is valid as well
-                        if self.is_within_bounds(beyond_r, beyond_c):
-                            if self.total_pieces[beyond_r][beyond_c] == "-":
-                                # print("The piece we want to move to: " + str([beyond_r, beyond_c]))
-                                current = "MoveTo: " + str([beyond_r, beyond_c])
-                                parent = "ParentMove: " + str([r, c])
-                                removed_list.append([move_row, move_col])
-                                # print(removed_list)
-                                legal_moves.append([count, current, parent])
-                                # Store the list of possible multi jumps
+            current_direction = directions[counter]
+            # If we are not going in the same direction automatically stop looking
+            if direction is None or direction == current_direction:
+                move_row = r + m[0]
+                move_col = c + m[1]
+                jumped = False
+                # Check if the current move is valid to continue
+                if self.is_within_bounds(move_row, move_col):
+                    # print("Is within bounds: " + str([move_row, move_col]))
+                    # If the space is not empty continue
+                    # Now that we know it is in the board, loop to check if it has been jumped or not
+                    current_piece = [move_row, move_col]
+                    # print(current_piece)
+                    for jumped_pieces in removed_list:
+                        if current_piece == jumped_pieces:
+                            jumped = True
+                            # print("Piece has already been removed!")
+                    if not (self.total_pieces[move_row][move_col] == '-') and not jumped:
+                        # print("Move is not empty")
+                        # If the new space is a piece with a different color continue
+                        if not (self.total_pieces[move_row][move_col].color == color):
+                            # print("Color of it is different as well")
+                            # Check if the space beyond is empty
+                            beyond_r = move_row + m[0]
+                            beyond_c = move_col + m[1]
+                            # Check if space past piece is valid as well
+                            if self.is_within_bounds(beyond_r, beyond_c):
+                                if self.total_pieces[beyond_r][beyond_c] == "-":
+                                    # print("The piece we want to move to: " + str([beyond_r, beyond_c]))
+                                    current = "MoveTo: " + str([beyond_r, beyond_c])
+                                    parent = "ParentMove: " + str([r, c])
+                                    removed_list.append([move_row, move_col])
+                                    # print(removed_list)
+                                    legal_moves.append([count, current, parent])
+                                    # Store the list of possible multi jumps
 
-                                # print("The current count is at: " + str(count))
-                                count += 1
-                                legal_moves.extend(
-                                    self.generate_list_legal_moves(beyond_r, beyond_c, color, removed_list, count))
-                                count = 0
-                                del removed_list[-1]
+                                    # print("The current count is at: " + str(count))
+                                    count += 1
+                                    legal_moves.extend(
+                                        self.generate_list_legal_moves(beyond_r, beyond_c, color, removed_list, count, current_direction))
+                                    count = 0
+                                    del removed_list[-1]
+            counter += 1
         return legal_moves
 
     """
