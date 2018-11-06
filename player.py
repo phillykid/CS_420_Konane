@@ -35,9 +35,8 @@ class HumanPlayer():
                 print("Enter value like this to remove a piece: 1,1")
                 move = input()
                 check = board.human_move_start(move)
-                print(check)
             else:
-                if board.terminal_state(board.WHITE_ICON):
+                if board.terminal_state(self.color):
                     print(self.color, "Lost!")
                     board.player_has_no_moves(self.color)
                     print(board.gameWon)
@@ -49,7 +48,7 @@ class HumanPlayer():
 
 
 # Makes moves based on the ratio between number of ally pieces and enemy pieces
-class ComputerSimplePlayer():
+class ComputerSimplePlayer:
     def __init__(self, color, opponent_color, depth_limit):
         name = "Computer_Simple_Player"
         self.color = color
@@ -59,11 +58,10 @@ class ComputerSimplePlayer():
     def getMove(self, board):
         #bboard,score,move= Minimax_tracker.minimax(board,0,self.depth_limit,1)
         move = ABTracker.alpha_beta_pruning(board, 0, self.depth_limit, 1)
-        print("Move:", move)
         if move == None:
-            # print(self.color,"GAME LOSTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
+            print(self.color, "Lost!")
             board.player_has_no_moves(self.color)
-            print(board.gameWon)
+            #print(board.gameWon)
             return
         board.computer_move(move[0], move[1])
 
@@ -118,13 +116,13 @@ class ComputerAttritionPlayer():
         self.depth_limit = depth_limit
 
     def getMove(self, board):
-        bboard,score,move= Minimax_tracker.minimax(board,0,self.depth_limit,4)
-        #move = ABTracker.alpha_beta_pruning(board, 0, self.depth_limit, 4)
-        print("Move:", move)
+        #bboard,score,move= Minimax_tracker.minimax(board,0,self.depth_limit,4)
+        move = ABTracker.alpha_beta_pruning(board, 0, self.depth_limit, 4)
+        #print("Move:", move)
         if move == None:
             # No move made so we don't count it towards its total moves
             print(self.color, "Lost!")
             board.player_has_no_moves(self.color)
-            print(board.gameWon)
+            #print(board.gameWon)
             return
         board.computer_move(move[0], move[1])
